@@ -28,12 +28,12 @@
           >
             <source
               v-if="shouldLoadSources(index)"
-              :src="`video/webm/${game.src}.webm?3`"
+              :src="`/video/webm/${game.src}.webm?3`"
               type="video/webm"
             />
             <source
               v-if="shouldLoadSources(index)"
-              :src="`video/h264/${game.src}.mp4?3`"
+              :src="`/video/h264/${game.src}.mp4?3`"
               type="video/mp4"
             />
           </video>
@@ -219,11 +219,11 @@ interface Game {
 
 // Функции для генерации путей к медиафайлам
 function getThumbPath(src: string): string {
-  return `thumbs/${src}.webp`
+  return `/thumbs/${src}.webp`
 }
 
 function getPosterPath(src: string): string {
-  return `video/posters/${src}.webp`
+  return `/video/posters/${src}.webp`
 }
 
 // Рекативные переменные
