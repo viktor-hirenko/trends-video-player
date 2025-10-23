@@ -22,6 +22,7 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: 'dist/trends-all-geo',
     assetsDir: 'shorts',
   },
 })

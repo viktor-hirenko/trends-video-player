@@ -599,7 +599,7 @@ function scrollToVideo(direction: 'forwards' | 'backwards'): void {
 const observerOptions: IntersectionObserverInit = {
   root: null,
   rootMargin: '0px',
-  threshold: 0.8,
+  threshold: 0.7,
 }
 
 let finalObserver: IntersectionObserver | null = null
