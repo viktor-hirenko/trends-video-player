@@ -2,16 +2,21 @@
   <div class="desktop_wrapper">
     <div id="video_area" class="video_area">
       <div ref="videos_container" class="videos_container">
+        <!-- [DP-11241][P0] Верхний спейсер: сохраняет общую высоту документа при windowed rendering -->
+        <div :style="{ height: topSpacerHeight + 'px' }"></div>
+        
         <div
-          v-for="(game, index) in games"
+          v-for="(game, index) in visibleGames"
           :key="game.game_slug"
           :id="game.game_slug"
           class="video_screen"
-          :class="{ 'autoplay-blocked': autoplayBlocked && currentVideoIndex === index }"
+          :class="{
+            'autoplay-blocked': autoplayBlocked && currentVideoIndex === renderWindow.start + index,
+          }"
         >
           <img
             :src="getPosterPath(game.src)"
-            v-if="shouldLoadMedia(index) && game.game_slug !== 'final_popup'"
+            v-if="shouldLoadMedia(renderWindow.start + index) && game.game_slug !== 'final_popup'"
             class="poster"
             alt="poster"
           />
@@ -19,20 +24,20 @@
           <video
             v-if="game.game_slug !== 'final_popup'"
             class="video_screen_item"
-            :preload="shouldLoadSources(index) ? 'metadata' : 'none'"
+            :preload="shouldLoadSources(renderWindow.start + index) ? 'metadata' : 'none'"
             muted
             loop
             playsinline
-            :poster="shouldLoadMedia(index) ? getPosterPath(game.src) : ''"
-            :ref="(el) => setVideoRef(el as HTMLVideoElement, index)"
+            :poster="shouldLoadMedia(renderWindow.start + index) ? getPosterPath(game.src) : ''"
+            :ref="(el) => setVideoRef(el as HTMLVideoElement, renderWindow.start + index)"
           >
             <source
-              v-if="shouldLoadSources(index)"
+              v-if="shouldLoadSources(renderWindow.start + index)"
               :src="`/video/webm/${game.src}.webm?3`"
               type="video/webm"
             />
             <source
-              v-if="shouldLoadSources(index)"
+              v-if="shouldLoadSources(renderWindow.start + index)"
               :src="`/video/h264/${game.src}.mp4?3`"
               type="video/mp4"
             />
@@ -48,7 +53,11 @@
 
           <transition name="fade">
             <img
-              v-if="showPlayIcon && currentVideoIndex === index && shouldLoadMedia(index)"
+              v-if="
+                showPlayIcon &&
+                currentVideoIndex === renderWindow.start + index &&
+                shouldLoadMedia(renderWindow.start + index)
+              "
               id="play_icon"
               class="media_state_icons"
               src="/icons/play.svg"
@@ -57,7 +66,11 @@
           </transition>
           <transition name="fade">
             <img
-              v-if="showPauseIcon && currentVideoIndex === index && shouldLoadMedia(index)"
+              v-if="
+                showPauseIcon &&
+                currentVideoIndex === renderWindow.start + index &&
+                shouldLoadMedia(renderWindow.start + index)
+              "
               id="pause_icon"
               class="media_state_icons"
               src="/icons/pause.svg"
@@ -66,7 +79,11 @@
           </transition>
           <transition name="fade">
             <img
-              v-if="showSoundOnIcon && currentVideoIndex === index && shouldLoadMedia(index)"
+              v-if="
+                showSoundOnIcon &&
+                currentVideoIndex === renderWindow.start + index &&
+                shouldLoadMedia(renderWindow.start + index)
+              "
               id="sound_on_icon"
               class="media_state_icons"
               src="/icons/sound_on.svg"
@@ -75,7 +92,11 @@
           </transition>
           <transition name="fade">
             <img
-              v-if="showSoundOffIcon && currentVideoIndex === index && shouldLoadMedia(index)"
+              v-if="
+                showSoundOffIcon &&
+                currentVideoIndex === renderWindow.start + index &&
+                shouldLoadMedia(renderWindow.start + index)
+              "
               id="sound_off_icon"
               class="media_state_icons"
               src="/icons/sound_off.svg"
@@ -85,7 +106,11 @@
 
           <!-- Большая кнопка воспроизведения для заблокированного автоплея -->
           <div
-            v-if="autoplayBlocked && currentVideoIndex === index && shouldLoadMedia(index)"
+            v-if="
+              autoplayBlocked &&
+              currentVideoIndex === renderWindow.start + index &&
+              shouldLoadMedia(renderWindow.start + index)
+            "
             @click="handleFirstUserInteraction($event)"
             class="autoplay_blocked_overlay"
           >
@@ -114,7 +139,7 @@
               alt="like_button"
             />
             <GameInfo
-              v-if="shouldLoadMedia(index) && game.game_slug !== 'final_popup'"
+              v-if="shouldLoadMedia(renderWindow.start + index) && game.game_slug !== 'final_popup'"
               :thumb="getThumbPath(game.src)"
               :provider_link="game.provider_slug"
               :name="game.name"
@@ -132,14 +157,17 @@
           </div>
           <div
             class="progress_bg"
-            v-if="game.game_slug !== 'final_popup' && shouldLoadMedia(index)"
+            v-if="game.game_slug !== 'final_popup' && shouldLoadMedia(renderWindow.start + index)"
           ></div>
           <div
             class="progress_bar"
             :style="{ width: videoProgress + '%' }"
-            v-if="game.game_slug !== 'final_popup' && shouldLoadMedia(index)"
+            v-if="game.game_slug !== 'final_popup' && shouldLoadMedia(renderWindow.start + index)"
           ></div>
         </div>
+        
+        <!-- [DP-11241][P0] Нижний спейсер: сохраняет общую высоту документа при windowed rendering -->
+        <div :style="{ height: bottomSpacerHeight + 'px' }"></div>
       </div>
     </div>
 
@@ -176,12 +204,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, Ref, getCurrentInstance, nextTick } from 'vue'
+import {
+  ref,
+  computed,
+  onMounted,
+  onUnmounted,
+  watch,
+  Ref,
+  getCurrentInstance,
+  nextTick,
+} from 'vue'
 import type { Game as GameData } from './types/game'
 import { useGamesData } from './composables/useGamesData'
 import smoothscroll from 'smoothscroll-polyfill'
 import GameInfo from './components/gameInfo.vue'
 import FinalPopup from './components/finalIPopup.vue'
+import { devLog, devWarn, devError } from './utils/devLog'
 import {
   sendReelsUnmute,
   sendReelsMute,
@@ -269,6 +307,24 @@ const autoplayBlocked = ref<boolean>(false)
 
 // Переменные для управления памятью
 const loadedMediaRange = ref<{ start: number; end: number }>({ start: 0, end: 2 })
+// [DP-11241][P0] Быстрое UI-окно (постер/панель) вокруг активного элемента
+const uiRange = ref<{ start: number; end: number }>({ start: 0, end: 2 })
+// [DP-11241][P0] Оконный рендер: держим в DOM только текущие ±4
+const renderWindow = ref<{ start: number; end: number }>({ start: 0, end: 9 })
+const visibleGames = computed(() => {
+  const s = Math.max(0, renderWindow.value.start)
+  const e = Math.min(games.value.length, renderWindow.value.end + 1)
+  return games.value.slice(s, e)
+})
+
+// [DP-11241][P0] Высота одного элемента (фуллскрин-карточки = viewport)
+const itemHeight = ref<number>(window.innerHeight)
+
+// [DP-11241][P0] Верхний спейсер: компенсирует скрытые элементы сверху окна
+const topSpacerHeight = computed(() => renderWindow.value.start * itemHeight.value)
+
+// [DP-11241][P0] Нижний спейсер: компенсирует скрытые элементы снизу окна
+const bottomSpacerHeight = computed(() => (games.value.length - (renderWindow.value.end + 1)) * itemHeight.value)
 const unloadTimeout = ref<number | null>(null)
 const observer = ref<IntersectionObserver | null>(null)
 const lastVideoChangeTime = ref<number>(0)
@@ -314,7 +370,7 @@ function detectDeviceCapabilities(): void {
   // Реальная проверка будет в onIntersection при попытке воспроизведения
   canAutoplay.value = true
 
-  console.log('Device detection:', {
+  devLog('[DP-11241] Device detection:', {
     isMobile: isMobileDevice.value,
     isLowPower: isLowPowerMode.value,
     canAutoplay: canAutoplay.value,
@@ -351,7 +407,7 @@ async function safeVideoPlay(
 
     if (playPromise !== undefined) {
       await playPromise
-      console.log('Видео успешно запущено:', videoIndex)
+      devLog('[DP-11241] Видео успешно запущено:', videoIndex)
       playAttempts.value.delete(videoIndex) // Сбрасываем счетчик при успехе
 
       // Если автоплей сработал, сбрасываем флаг блокировки
@@ -364,7 +420,12 @@ async function safeVideoPlay(
     }
 
     return false
-  } catch (error) {
+  } catch (error: any) {
+    // [DP-11241][P0] AbortError возможен при быстрой смене — считаем нормальной гонкой
+    if (error?.name === 'AbortError') {
+      return false
+    }
+
     console.error('Ошибка воспроизведения видео (автоплей заблокирован):', error)
 
     // Увеличиваем счетчик попыток
@@ -416,7 +477,7 @@ function handleFirstUserInteraction(event?: Event): void {
     void currentVideo.value
       .play()
       .then(() => {
-        console.log('Видео успешно запущено после пользовательского взаимодействия')
+        devLog('[DP-11241] Видео успешно запущено после пользовательского взаимодействия')
         autoplayBlocked.value = false
         canAutoplay.value = true
         wasManuallyPaused.value = false
@@ -520,7 +581,7 @@ function getParentOrigin(): string {
       return parentUrl
     }
   } catch (e) {
-    console.log('Не удается получить parent origin через window.parent:', e)
+    devWarn('[DP-11241] Не удается получить parent origin через window.parent:', e)
   }
 
   // Пробуем получить из document.referrer
@@ -539,7 +600,7 @@ function getParentOrigin(): string {
 }
 
 function onGoToExternalLink(pathname: string): void {
-  console.log('onGoToExternalLink called with pathname:', pathname)
+  devLog('[DP-11241] onGoToExternalLink called with pathname:', pathname)
 
   // Ставим видео на паузу перед открытием ссылки
   if (currentVideo.value && !currentVideo.value.paused) {
@@ -560,7 +621,7 @@ function onGoToExternalLink(pathname: string): void {
   // Отправляем аналитическое сообщение с pathname в label
   sendReelsExternalLink(gameSlug, gameName, providerSlug, providerName, path)
 
-  console.log('Открываем URL:', linkUrl)
+  devLog('[DP-11241] Открываем URL:', linkUrl)
   window.open(linkUrl, '_blank')
 }
 
@@ -598,11 +659,15 @@ function scrollToVideo(direction: 'forwards' | 'backwards'): void {
 
 const observerOptions: IntersectionObserverInit = {
   root: null,
-  rootMargin: '0px',
-  threshold: 0.7,
+  // [DP-11241][P0] Ранний триггер для прелоада соседей на мобилках
+  rootMargin: '20% 0px',
+  threshold: 0.3,
 }
 
 let finalObserver: IntersectionObserver | null = null
+// [DP-11241][P0] Последовательность воспроизведения для устранения гонок play/pause
+let playSeq = 0
+let intersectionTimeout: number | null = null
 
 function handleFinalIntersection(entries: IntersectionObserverEntry[]) {
   entries.forEach(entry => {
@@ -618,7 +683,8 @@ function handleFinalIntersection(entries: IntersectionObserverEntry[]) {
  * Определяет, нужно ли загружать медиа (постеры) для данного индекса
  */
 function shouldLoadMedia(index: number): boolean {
-  return index >= loadedMediaRange.value.start && index <= loadedMediaRange.value.end
+  // [DP-11241][P0] Используем быстрое UI-окно вместо отложенного
+  return index >= uiRange.value.start && index <= uiRange.value.end
 }
 
 /**
@@ -678,6 +744,7 @@ function debounce<T extends (...args: any[]) => any>(
 function unloadDistantVideos(): void {
   // Уменьшаем диапазон на мобильных устройствах для экономии памяти
   const mediaRange = isMobileDevice.value || isLowPowerMode.value ? 1 : 2
+  const protect = 1 // [DP-11241][P0] Не чистим current ±1 при освобождении памяти
   const currentIndex = currentVideoIndex.value
 
   // Обновляем диапазон загружаемых медиа
@@ -688,7 +755,7 @@ function unloadDistantVideos(): void {
 
   // Выгружаем видео, которые находятся вне диапазона
   videoRefs.value.forEach((video, index) => {
-    if (video && Math.abs(index - currentIndex) > mediaRange) {
+    if (video && Math.abs(index - currentIndex) > mediaRange + protect) {
       // Останавливаем воспроизведение и очищаем источники
       video.pause()
       video.removeAttribute('src')
@@ -776,10 +843,37 @@ const debouncedUnloadVideos = debounce(unloadDistantVideos, 1000)
 /**
  * Обновляет диапазон загружаемых видео при смене текущего видео
  */
+// [DP-11241][P0] Функции для быстрого обновления UI-окна и рендер-окна
+function updateUiRange(): void {
+  const buf = isMobileDevice.value ? 3 : 2
+  const i = currentVideoIndex.value
+  uiRange.value = {
+    start: Math.max(0, i - buf),
+    end: Math.min(games.value.length - 1, i + buf),
+  }
+}
+
+function updateRenderWindow(): void {
+  const buf = 4
+  const i = currentVideoIndex.value
+  renderWindow.value = {
+    start: Math.max(0, i - buf),
+    end: Math.min(games.value.length - 1, i + buf),
+  }
+}
+
 function updateMediaRange(): void {
   // Отменяем предыдущий таймер
   if (unloadTimeout.value) {
     clearTimeout(unloadTimeout.value)
+  }
+
+  // [DP-11241][P0] Быстрое обновление окна (чтобы UI не ждал)
+  const mr = isMobileDevice.value || isLowPowerMode.value ? 1 : 2
+  const i = currentVideoIndex.value
+  loadedMediaRange.value = {
+    start: Math.max(0, i - mr),
+    end: Math.min(games.value.length - 1, i + mr),
   }
 
   // На мобильных устройствах сразу проверяем память
@@ -845,6 +939,16 @@ function addVideoProgressListener(video: HTMLVideoElement): void {
   // Создаем новый слушатель
   currentVideoProgressHandler.value = () => updateVideoProgress()
   video.addEventListener('timeupdate', currentVideoProgressHandler.value)
+
+  // [DP-11241][P0] Прелоад постера следующего на playing
+  const onPlaying = () => {
+    const next = games.value[currentVideoIndex.value + 1]
+    if (!next) return
+    const img = new Image()
+    img.decoding = 'async'
+    img.src = getPosterPath(next.src)
+  }
+  video.addEventListener('playing', onPlaying, { once: true })
 }
 
 /**
@@ -858,6 +962,18 @@ function removeVideoProgressListener(): void {
 }
 
 function onIntersection(entries: IntersectionObserverEntry[]): void {
+  // [DP-11241][P0] Debounce для быстрого скролла
+  if (intersectionTimeout) {
+    clearTimeout(intersectionTimeout)
+  }
+
+  intersectionTimeout = window.setTimeout(() => {
+    intersectionTimeout = null
+    processIntersection(entries)
+  }, 16) // [DP-11241][P0] 1 кадр (16ms) — сглаживает инерцию и дребезг при скролле
+}
+
+function processIntersection(entries: IntersectionObserverEntry[]): void {
   entries.forEach(entry => {
     const video = entry.target as HTMLVideoElement
     const container = video.closest('.video_screen') as HTMLElement | null
@@ -868,10 +984,13 @@ function onIntersection(entries: IntersectionObserverEntry[]): void {
     const videoIndex = games.value.findIndex(g => g.game_slug === gameSlug1)
 
     if (entry.isIntersecting) {
-      // Останавливаем предыдущее видео если оно играет
+      // [DP-11241][P0] Атомарность воспроизведения - сначала останавливаем предыдущее
       if (currentVideo.value && currentVideo.value !== video && !currentVideo.value.paused) {
+        currentVideo.value.muted = true
         currentVideo.value.pause()
       }
+
+      const seq = ++playSeq // [DP-11241][P0] Инкрементируем после остановки предыдущего
 
       // Удаляем слушатель с предыдущего видео
       removeVideoProgressListener()
@@ -886,6 +1005,8 @@ function onIntersection(entries: IntersectionObserverEntry[]): void {
       if (videoIndex !== -1 && videoIndex !== currentVideoIndex.value) {
         currentVideoIndex.value = videoIndex
         lastVideoChangeTime.value = Date.now()
+        updateUiRange()
+        updateRenderWindow()
         updateMediaRange()
       }
 
@@ -904,7 +1025,8 @@ function onIntersection(entries: IntersectionObserverEntry[]): void {
       // Безопасно пытаемся запустить видео
       if (videoIndex !== -1) {
         void safeVideoPlay(video, videoIndex).then(success => {
-          if (success) {
+          if (success && seq === playSeq) {
+            video.muted = !soundOn.value
             // Отправляем аналитическое событие только при успешном запуске
             setTimeout(() => {
               if (!orientationChanged.value) {
@@ -912,7 +1034,7 @@ function onIntersection(entries: IntersectionObserverEntry[]): void {
               }
             }, 300)
           } else {
-            console.log('Автоплей заблокирован - видео готово к ручному запуску')
+            devLog('[DP-11241] Автоплей заблокирован - видео готово к ручному запуску')
           }
         })
       }
@@ -1269,6 +1391,8 @@ onMounted(async () => {
     document.addEventListener('keydown', handleFirstUserInteraction)
   }
 
+  // [DP-11241][P0] Позиционный fallback удален: спейсеры решают проблему скачков
+
   scrollToTop()
 
   // Инициализируем время последней смены видео
@@ -1279,9 +1403,9 @@ onMounted(async () => {
     try {
       const referrerUrl = new URL(document.referrer)
       parentOrigin.value = referrerUrl.origin
-      console.log('Сохранен parent origin из referrer:', parentOrigin.value)
+      devLog('[DP-11241] Сохранен parent origin из referrer:', parentOrigin.value)
     } catch (e) {
-      console.log('Не удалось получить parent origin из referrer:', e)
+      devWarn('[DP-11241] Не удалось получить parent origin из referrer:', e)
     }
   }
 
@@ -1289,6 +1413,8 @@ onMounted(async () => {
   window.addEventListener('resize', checkOrientation)
   window.addEventListener('resize', () => {
     screenWidth.value = window.innerWidth
+    // [DP-11241][P0] Обновляем высоту элемента при ресайзе для корректных спейсеров
+    itemHeight.value = window.innerHeight
   })
 
   // Создаем единый observer
@@ -1320,6 +1446,10 @@ onMounted(async () => {
   sendReelsReady(gameSlug, gameName, providerSlug, providerName)
   isPortrait = window.screen.orientation.angle === 0 || window.screen.orientation.angle === 180
   window.addEventListener('orientationchange', checkOrientation)
+  // [DP-11241][P0] Обновляем высоту элемента при смене ориентации для корректных спейсеров
+  window.addEventListener('orientationchange', () => {
+    itemHeight.value = window.innerHeight
+  })
 
   // Добавляем слушатель для автоматического воспроизведения при возвращении на вкладку
   document.addEventListener('visibilitychange', handleVisibilityChange)
@@ -1340,6 +1470,9 @@ onUnmounted(() => {
   }
   if (memoryCheckInterval.value) {
     window.clearInterval(memoryCheckInterval.value)
+  }
+  if (intersectionTimeout) {
+    clearTimeout(intersectionTimeout)
   }
 
   // Очищаем слушатели пользовательского взаимодействия
