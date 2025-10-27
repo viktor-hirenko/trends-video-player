@@ -28,6 +28,7 @@
             muted
             loop
             playsinline
+            webkit-playsinline
             :poster="shouldLoadMedia(renderWindow.start + index) ? getPosterPath(game.src) : ''"
             :ref="(el) => setVideoRef(el as HTMLVideoElement, renderWindow.start + index)"
           >
@@ -104,7 +105,7 @@
             />
           </transition>
 
-          <!-- Большая кнопка воспроизведения для заблокированного автоплея -->
+          <!-- Кнопка запуска при заблокированном автоплее -->
           <div
             v-if="
               autoplayBlocked &&
@@ -150,7 +151,7 @@
           ></div>
         </div>
 
-        <!-- [DP-11241][P0] Нижний спейсер: сохраняет общую высоту документа при windowed rendering -->
+        <!-- [DP-11241][P0] Нижний спейсер виртуализации -->
         <div :style="{ height: bottomSpacerHeight + 'px' }"></div>
       </div>
     </div>
@@ -185,7 +186,7 @@
       <img src="/icons/sound_off.svg" alt="sound_off" />
     </div>
 
-    <!-- [DP-11241][P1] Fixed GameInfo panel: рендерится один раз и обновляется реактивно -->
+    <!-- [DP-11241][P1] GameInfo: один рендер, далее реактивные обновления -->
     <GameInfo
       v-if="activeGame && activeGame.game_slug !== 'final_popup'"
       :thumb="getThumbPath(activeGame.src)"
@@ -201,7 +202,6 @@
       :no-demo="activeGame.no_demo"
       :is-user-loged-in="isUserLogedIn"
       :external-link="activeGame.external_link"
-      class="fixed-game-info"
     />
   </div>
 </template>
@@ -299,6 +299,10 @@ const canAutoplay = ref<boolean>(true)
 const playAttempts = ref<Map<number, number>>(new Map())
 const pendingPlayPromises = ref<Set<number>>(new Set())
 
+// [DP-11241][P1] iOS детекция и прайминг для разблокировки автоплея в Low Power Mode
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+const hasPrimedVideos = ref<boolean>(false)
+
 // Переменная для interval мониторинга памяти
 const memoryCheckInterval = ref<number | null>(null)
 
@@ -310,7 +314,7 @@ const autoplayBlocked = ref<boolean>(false)
 
 // Переменные для управления памятью
 const loadedMediaRange = ref<{ start: number; end: number }>({ start: 0, end: 2 })
-// [DP-11241][P0] Быстрое UI-окно (постер/панель) вокруг активного элемента
+// [DP-11241][P0] Буфер видимых элементов вокруг активного видео
 const uiRange = ref<{ start: number; end: number }>({ start: 0, end: 2 })
 // [DP-11241][P0] Оконный рендер: держим в DOM только текущие ±4
 const renderWindow = ref<{ start: number; end: number }>({ start: 0, end: 9 })
@@ -350,6 +354,52 @@ let isPortrait = false
 let loadedGamesData: GameData[] = []
 
 /**
+ * [DP-11241][P1] Разблокирует соседние видео для автоплея на iOS Low Power Mode
+ * Короткая последовательность play() → pause() получает разрешение браузера на воспроизведение
+ *
+ * @param centerIndex - индекс текущего активного видео
+ * @param radius - радиус соседних видео для разблокировки (по умолчанию 3)
+ */
+function primeNearbyVideos(centerIndex: number, radius: number = 3): void {
+  if (!isIOS) return
+
+  const start = Math.max(0, centerIndex - radius)
+  const end = Math.min(games.value.length - 1, centerIndex + radius)
+
+  let primedCount = 0
+
+  for (let i = start; i <= end; i++) {
+    if (i === centerIndex) continue // текущее видео не трогаем
+
+    const video = videoRefs.value[i]
+    if (!video) continue
+
+    try {
+      // Настройка атрибутов для iOS
+      video.setAttribute('playsinline', '')
+      video.setAttribute('webkit-playsinline', '')
+      video.muted = true
+
+      // Короткий play/pause разблокирует видео для автоплея
+      video
+        .play()
+        .then(() => {
+          video.pause()
+        })
+        .catch(() => {
+          // Ошибки игнорируются
+        })
+
+      primedCount++
+    } catch (error) {
+      // Игнорим ошибки отдельных видео
+    }
+  }
+
+  hasPrimedVideos.value = true
+}
+
+/**
  * Детектирует мобильные устройства и режим энергосбережения
  */
 function detectDeviceCapabilities(): void {
@@ -377,12 +427,6 @@ function detectDeviceCapabilities(): void {
   // Для начала предполагаем что автоплей возможен
   // Реальная проверка будет в onIntersection при попытке воспроизведения
   canAutoplay.value = true
-
-  devLog('[DP-11241] Device detection:', {
-    isMobile: isMobileDevice.value,
-    isLowPower: isLowPowerMode.value,
-    canAutoplay: canAutoplay.value,
-  })
 }
 
 /**
@@ -415,7 +459,6 @@ async function safeVideoPlay(
 
     if (playPromise !== undefined) {
       await playPromise
-      devLog('[DP-11241] Видео успешно запущено:', videoIndex)
       playAttempts.value.delete(videoIndex) // Сбрасываем счетчик при успехе
 
       // Если автоплей сработал, сбрасываем флаг блокировки
@@ -429,19 +472,19 @@ async function safeVideoPlay(
 
     return false
   } catch (error: any) {
-    // [DP-11241][P0] AbortError возможен при быстрой смене — считаем нормальной гонкой
-    if (error?.name === 'AbortError') {
-      return false
-    }
+    // AbortError возникает при быстрой смене видео — это нормально, не блокируем автоплей
+    if (error?.name === 'AbortError') return false
 
     console.error('Ошибка воспроизведения видео (автоплей заблокирован):', error)
 
     // Увеличиваем счетчик попыток
     playAttempts.value.set(videoIndex, currentAttempts + 1)
 
-    // Устанавливаем флаги блокировки автоплея
-    autoplayBlocked.value = true
-    canAutoplay.value = false
+    // NotAllowedError означает что браузер требует жест пользователя для воспроизведения
+    if (error?.name === 'NotAllowedError') {
+      autoplayBlocked.value = true
+      canAutoplay.value = false
+    }
 
     // Если превышено количество попыток, окончательно отключаем автоплей
     if (currentAttempts >= maxAttempts) {
@@ -479,26 +522,34 @@ function handleFirstUserInteraction(event?: Event): void {
   document.removeEventListener('click', handleFirstUserInteraction)
   document.removeEventListener('keydown', handleFirstUserInteraction)
 
-  // Пытаемся запустить текущее видео
-  if (currentVideo.value && currentVideo.value.paused) {
-    // Пробуем запустить напрямую после пользовательского взаимодействия без сброса времени
-    void currentVideo.value
-      .play()
-      .then(() => {
-        devLog('[DP-11241] Видео успешно запущено после пользовательского взаимодействия')
-        autoplayBlocked.value = false
-        canAutoplay.value = true
-        wasManuallyPaused.value = false
-        showPlayIcon.value = true
-        setTimeout(() => (showPlayIcon.value = false), 300)
-        sendReelsPlay(gameSlug, gameName, providerSlug, providerName)
-        isPlaybackOperationInProgress.value = false
-      })
-      .catch(error => {
-        console.error('Ошибка запуска видео после взаимодействия:', error)
-        isPlaybackOperationInProgress.value = false
-      })
-  } else {
+  const video = currentVideo.value
+  if (!video) {
+    isPlaybackOperationInProgress.value = false
+    return
+  }
+
+  try {
+    // На iOS сразу разблокируем соседние видео пока есть разрешение от браузера
+    if (isIOS) {
+      primeNearbyVideos(currentVideoIndex.value, 3)
+    }
+
+    // Запускаем текущее видео
+    video.setAttribute('playsinline', '')
+    video.setAttribute('webkit-playsinline', '')
+    video.muted = !soundOn.value
+    video.play()
+
+    autoplayBlocked.value = false
+    canAutoplay.value = true
+    wasManuallyPaused.value = false
+    showPlayIcon.value = true
+    setTimeout(() => (showPlayIcon.value = false), 300)
+    sendReelsPlay(gameSlug, gameName, providerSlug, providerName)
+  } catch (error) {
+    console.error('Ошибка запуска видео после взаимодействия:', error)
+    autoplayBlocked.value = true
+  } finally {
     isPlaybackOperationInProgress.value = false
   }
 }
@@ -608,8 +659,6 @@ function getParentOrigin(): string {
 }
 
 function onGoToExternalLink(pathname: string): void {
-  devLog('[DP-11241] onGoToExternalLink called with pathname:', pathname)
-
   // Ставим видео на паузу перед открытием ссылкиам
   if (currentVideo.value && !currentVideo.value.paused) {
     currentVideo.value.pause()
@@ -629,7 +678,6 @@ function onGoToExternalLink(pathname: string): void {
   // Отправляем аналитическое сообщение с pathname в label
   sendReelsExternalLink(gameSlug, gameName, providerSlug, providerName, path)
 
-  devLog('[DP-11241] Открываем URL:', linkUrl)
   window.open(linkUrl, '_blank')
 }
 
@@ -699,7 +747,8 @@ function shouldLoadMedia(index: number): boolean {
  * Определяет, нужно ли загружать источники видео для данного индекса
  */
 function shouldLoadSources(index: number): boolean {
-  const range = 1 // Загружаем источники только для текущего и соседних видео
+  // Загружаем видео источники для текущего ±2 элементов
+  const range = 2
   return Math.abs(index - currentVideoIndex.value) <= range
 }
 
@@ -713,6 +762,20 @@ function setVideoRef(el: HTMLVideoElement | null, index: number): void {
     if (observer.value && !el.dataset.observed) {
       observer.value.observe(el)
       el.dataset.observed = 'true'
+    }
+
+    // iOS: разблокируем новые видео, появившиеся в DOM после первого взаимодействия
+    if (isIOS && userHasInteracted.value && hasPrimedVideos.value) {
+      const distance = Math.abs(index - currentVideoIndex.value)
+      if (distance <= 3 && distance > 0) {
+        el.setAttribute('playsinline', '')
+        el.setAttribute('webkit-playsinline', '')
+        el.muted = true
+        void el
+          .play()
+          ?.then(() => el.pause())
+          .catch(() => {})
+      }
     }
   } else {
     // Очищаем ref при размонтировании
@@ -751,19 +814,23 @@ function debounce<T extends (...args: any[]) => any>(
  */
 function unloadDistantVideos(): void {
   // Уменьшаем диапазон на мобильных устройствах для экономии памяти
-  const mediaRange = isMobileDevice.value || isLowPowerMode.value ? 1 : 2
-  const protect = 1 // [DP-11241][P0] Не чистим current ±1 при освобождении памяти
+  const baseMediaRange = isMobileDevice.value || isLowPowerMode.value ? 1 : 2
+  const baseProtect = 1 // [DP-11241][P0] Не чистим current ±1 при освобождении памяти
+
+  // iOS: после разблокировки расширяем защиту до ±3, чтобы не удалить их
+  const protect = isIOS && hasPrimedVideos.value ? Math.max(baseProtect, 3) : baseProtect
+
   const currentIndex = currentVideoIndex.value
 
   // Обновляем диапазон загружаемых медиа
   loadedMediaRange.value = {
-    start: Math.max(0, currentIndex - mediaRange),
-    end: Math.min(games.value.length - 1, currentIndex + mediaRange),
+    start: Math.max(0, currentIndex - baseMediaRange),
+    end: Math.min(games.value.length - 1, currentIndex + baseMediaRange),
   }
 
   // Выгружаем видео, которые находятся вне диапазона
   videoRefs.value.forEach((video, index) => {
-    if (video && Math.abs(index - currentIndex) > mediaRange + protect) {
+    if (video && Math.abs(index - currentIndex) > baseMediaRange + protect) {
       // Останавливаем воспроизведение и очищаем источники
       video.pause()
       video.removeAttribute('src')
@@ -948,7 +1015,7 @@ function addVideoProgressListener(video: HTMLVideoElement): void {
   currentVideoProgressHandler.value = () => updateVideoProgress()
   video.addEventListener('timeupdate', currentVideoProgressHandler.value)
 
-  // [DP-11241][P0] Прелоад постера следующего на playing
+  // [DP-11241][P0] Прелоад постера следующего при событии playing
   const onPlaying = () => {
     const next = games.value[currentVideoIndex.value + 1]
     if (!next) return
@@ -970,7 +1037,7 @@ function removeVideoProgressListener(): void {
 }
 
 function onIntersection(entries: IntersectionObserverEntry[]): void {
-  // [DP-11241][P0] Debounce для быстрого скролла
+  // [DP-11241][P0] Debounce обработки пересечений при быстром скролле
   if (intersectionTimeout) {
     clearTimeout(intersectionTimeout)
   }
@@ -992,7 +1059,7 @@ function processIntersection(entries: IntersectionObserverEntry[]): void {
     const videoIndex = games.value.findIndex(g => g.game_slug === gameSlug1)
 
     if (entry.isIntersecting) {
-      // [DP-11241][P0] Атомарность воспроизведения - сначала останавливаем предыдущее
+      // [DP-11241][P0] Последовательное воспроизведение: сперва пауза предыдущего
       if (currentVideo.value && currentVideo.value !== video && !currentVideo.value.paused) {
         currentVideo.value.muted = true
         currentVideo.value.pause()
@@ -1041,8 +1108,6 @@ function processIntersection(entries: IntersectionObserverEntry[]): void {
                 sendReelsCurrentVideo(gameSlug, gameName, providerSlug, providerName)
               }
             }, 300)
-          } else {
-            devLog('[DP-11241] Автоплей заблокирован - видео готово к ручному запуску')
           }
         })
       }
@@ -1391,6 +1456,11 @@ onMounted(async () => {
   // Инициализируем детекцию устройств
   detectDeviceCapabilities()
 
+  // iOS: явно показываем оверлей до первого жеста
+  if (isIOS) {
+    autoplayBlocked.value = true
+  }
+
   // Добавляем слушатели для первого пользовательского взаимодействия только на мобильных
   // где автоплей может быть заблокирован
   if (isMobileDevice.value) {
@@ -1399,7 +1469,7 @@ onMounted(async () => {
     document.addEventListener('keydown', handleFirstUserInteraction)
   }
 
-  // [DP-11241][P0] Позиционный fallback удален: спейсеры решают проблему скачков
+  // [DP-11241][P0] Fallback не требуется: спейсеры устраняют скачки
 
   scrollToTop()
 
@@ -1411,7 +1481,6 @@ onMounted(async () => {
     try {
       const referrerUrl = new URL(document.referrer)
       parentOrigin.value = referrerUrl.origin
-      devLog('[DP-11241] Сохранен parent origin из referrer:', parentOrigin.value)
     } catch (e) {
       devWarn('[DP-11241] Не удалось получить parent origin из referrer:', e)
     }
