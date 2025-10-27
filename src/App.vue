@@ -4,7 +4,7 @@
       <div ref="videos_container" class="videos_container">
         <!-- [DP-11241][P0] Верхний спейсер: сохраняет общую высоту документа при windowed rendering -->
         <div :style="{ height: topSpacerHeight + 'px' }"></div>
-        
+
         <div
           v-for="(game, index) in visibleGames"
           :key="game.game_slug"
@@ -138,22 +138,6 @@
               :src="isLiked(game.game_slug) ? './icons/like_on.svg' : './icons/like_off.svg'"
               alt="like_button"
             />
-            <GameInfo
-              v-if="shouldLoadMedia(renderWindow.start + index) && game.game_slug !== 'final_popup'"
-              :thumb="getThumbPath(game.src)"
-              :provider_link="game.provider_slug"
-              :name="game.name"
-              :provider="game.provider"
-              :game-id="game.game_slug"
-              @play-game="onPlayGame"
-              @go-to-provider="onGoToProvider"
-              @go-to-external-link="onGoToExternalLink"
-              :button-text="$t('play_button')"
-              :sign-up-button="$t('sign_up_button')"
-              :no-demo="game.no_demo"
-              :is-user-loged-in="isUserLogedIn"
-              :external-link="game.external_link"
-            />
           </div>
           <div
             class="progress_bg"
@@ -165,7 +149,7 @@
             v-if="game.game_slug !== 'final_popup' && shouldLoadMedia(renderWindow.start + index)"
           ></div>
         </div>
-        
+
         <!-- [DP-11241][P0] Нижний спейсер: сохраняет общую высоту документа при windowed rendering -->
         <div :style="{ height: bottomSpacerHeight + 'px' }"></div>
       </div>
@@ -200,6 +184,25 @@
       <img src="/icons/sound.svg" alt="sound" />
       <img src="/icons/sound_off.svg" alt="sound_off" />
     </div>
+
+    <!-- [DP-11241][P1] Fixed GameInfo panel: рендерится один раз и обновляется реактивно -->
+    <GameInfo
+      v-if="activeGame && activeGame.game_slug !== 'final_popup'"
+      :thumb="getThumbPath(activeGame.src)"
+      :provider_link="activeGame.provider_slug"
+      :name="activeGame.name"
+      :provider="activeGame.provider"
+      :game-id="activeGame.game_slug"
+      @play-game="onPlayGame"
+      @go-to-provider="onGoToProvider"
+      @go-to-external-link="onGoToExternalLink"
+      :button-text="$t('play_button')"
+      :sign-up-button="$t('sign_up_button')"
+      :no-demo="activeGame.no_demo"
+      :is-user-loged-in="isUserLogedIn"
+      :external-link="activeGame.external_link"
+      class="fixed-game-info"
+    />
   </div>
 </template>
 
@@ -324,7 +327,12 @@ const itemHeight = ref<number>(window.innerHeight)
 const topSpacerHeight = computed(() => renderWindow.value.start * itemHeight.value)
 
 // [DP-11241][P0] Нижний спейсер: компенсирует скрытые элементы снизу окна
-const bottomSpacerHeight = computed(() => (games.value.length - (renderWindow.value.end + 1)) * itemHeight.value)
+const bottomSpacerHeight = computed(
+  () => (games.value.length - (renderWindow.value.end + 1)) * itemHeight.value
+)
+
+// [DP-11241][P1] Активная игра для фиксированной панели GameInfo
+const activeGame = computed(() => games.value[currentVideoIndex.value] || null)
 const unloadTimeout = ref<number | null>(null)
 const observer = ref<IntersectionObserver | null>(null)
 const lastVideoChangeTime = ref<number>(0)
@@ -602,7 +610,7 @@ function getParentOrigin(): string {
 function onGoToExternalLink(pathname: string): void {
   devLog('[DP-11241] onGoToExternalLink called with pathname:', pathname)
 
-  // Ставим видео на паузу перед открытием ссылки
+  // Ставим видео на паузу перед открытием ссылкиам
   if (currentVideo.value && !currentVideo.value.paused) {
     currentVideo.value.pause()
     wasManuallyPaused.value = true
