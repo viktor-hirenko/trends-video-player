@@ -810,12 +810,12 @@ function isOverlayActive(index: number): boolean {
   const paused = !video || video.paused
 
   // Показываем оверлей если:
-  // 1) медиа ещё не разблокированы (нет первого тапа)
+  // 1) медиа ещё не разблокированы (нет первого тапа) - ТОЛЬКО в энергосбережении
   // 2) либо реально заблокирован автоплей
   return (
     currentVideoIndex.value === index &&
     shouldLoadMedia(index) &&
-    (!mediaUnlocked.value || (paused && (isVideoBlocked(index) || autoplayBlocked.value)))
+    ((isLowPowerMode.value && !mediaUnlocked.value) || (paused && (isVideoBlocked(index) || autoplayBlocked.value)))
   )
 }
 
@@ -1095,8 +1095,8 @@ function onIntersection(entries: IntersectionObserverEntry[]): void {
       wasManuallyPaused.value = false
       video.style.opacity = '1'
 
-      // Если жеста ещё не было — не автозапускаем!
-      if (!mediaUnlocked.value) {
+      // Если жеста ещё не было — не автозапускаем ТОЛЬКО в энергосбережении
+      if (isLowPowerMode.value && !mediaUnlocked.value) {
         video.pause()
         video.style.opacity = '1'
         return
@@ -1481,8 +1481,8 @@ onMounted(async () => {
   // Инициализируем детекцию устройств
   detectDeviceCapabilities()
 
-  // На десктопах можно считать gesture уже доступным
-  mediaUnlocked.value = !isMobileDevice.value
+  // Гейт жеста включаем только в энергосбережении
+  mediaUnlocked.value = !isLowPowerMode.value
 
   // Добавляем слушатели для первого пользовательского взаимодействия только на мобильных
   // где автоплей может быть заблокирован
