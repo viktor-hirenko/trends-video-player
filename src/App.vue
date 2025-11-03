@@ -815,7 +815,8 @@ function isOverlayActive(index: number): boolean {
   return (
     currentVideoIndex.value === index &&
     shouldLoadMedia(index) &&
-    ((isLowPowerMode.value && !mediaUnlocked.value) || (paused && (isVideoBlocked(index) || autoplayBlocked.value)))
+    ((isLowPowerMode.value && !mediaUnlocked.value) ||
+      (paused && (isVideoBlocked(index) || autoplayBlocked.value)))
   )
 }
 

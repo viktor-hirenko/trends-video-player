@@ -26,3 +26,4 @@ dist-ssr
 /Original video
 /.wrangler
 .localnotes/
+/src/.local
