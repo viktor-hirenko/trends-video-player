@@ -1,11 +1,14 @@
 {
-    "play_button": "Play now",
-    "sign_up_button": "Sign up",
-    "final_popup_title": "Yay, trends completed",
-    "final_popup_subtitle": "Enjoyed watching? Discover something new each time you rewatch",
-    "final_popup_button": "Rewatch trends",
-    "final_popup_evaluation": "How did you like it?",
-    "pirate_birthday_party": "Join the crew",
-    "external_link_prize": "2 000 000 EUR",
-    "external_link_description": "in pirate loot!"
+  "play_button": "Play now",
+  "sign_up_button": "Sign up",
+  "final_popup_title": "Yay, trends completed",
+  "final_popup_subtitle": "Enjoyed watching? Discover something new each time you rewatch",
+  "final_popup_button": "Rewatch trends",
+  "final_popup_evaluation": "How did you like it?",
+  "pirate_birthday_party": "Join the crew",
+  "external_link_prize": "2 000 000 EUR",
+  "external_link_description": "in pirate loot!",
+  "winter_promo_link_prize": "2 000 000 USD",
+  "winter_promo_link_text": "Off to Lapland",
+  "winter_promo_description": "in Santa's gifts!"
 }

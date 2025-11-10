@@ -1,43 +1,28 @@
 <template>
-  <div class="game_info_container" :class="{ 'no-background': props.externalLink }">
-    //
-    <!-- Стандартные элементы отображаются только если нет external_link -->
-    <template v-if="!props.externalLink">
-      <img class="game_info_thumb" :src="props.thumb" alt="" />
-      <div class="game_text_column">
-        <div class="game_name">{{ props.name }}</div>
-        <a @click="$emit('go-to-provider', props.provider_link)">
-          <div class="game_provider">{{ props.provider }}</div>
-        </a>
-      </div>
-      <a v-if="!isDemoDisabled || props.isUserLogedIn" @click="$emit('play-game', props.gameId)">
-        <div class="game_play_button">{{ buttonText }}</div>
-      </a>
-      <a
-        v-else
-        @click="
-          $emit(
-            'go-to-external-link',
-            '/registration?utm_source=site&utm_medium=reels&utm_campaign=trends'
-          )
-        "
-      >
-        <div class="game_play_button">{{ signUpButton }}</div>
-      </a>
-    </template>
+  <div class="promo_container" :class="{ promo_fullscreen: props.showVideo && props.gameId }">
+    <img
+      v-if="props.showVideo && props.gameId"
+      :src="getPosterPath(props.videoSrc)"
+      class="promo_poster"
+      alt="poster"
+    />
 
-    <!-- Новая кнопка внизу экрана для external_link -->
-    <!-- <div v-if="props.externalLink" class="external_link_container">
-      <div class="external_link_prize_text">
-        <div class="prize_amount">{{ $t('external_link_prize') }}</div>
-        <div class="prize_description">{{ $t('external_link_description') }}</div>
-      </div>
-      <a @click="$emit('go-to-external-link', props.externalLink.url)" class="external_link_button">
-        <div class="external_link_btn">{{ $t(props.externalLink.localeKey) }}</div>
-      </a>
-    </div> -->
+    <video
+      v-if="props.showVideo && props.gameId"
+      ref="promoVideoRef"
+      class="promo_video"
+      :poster="getPosterPath(props.videoSrc)"
+      preload="metadata"
+      :muted="!props.soundOn"
+      loop
+      playsinline
+      autoplay
+    >
+      <source :src="`/video/webm/${props.videoSrc}.webm?3`" type="video/webm" />
+      <source :src="`/video/h264/${props.videoSrc}.mp4?3`" type="video/mp4" />
+    </video>
 
-    <div v-if="props.externalLink" class="promo_content">
+    <div class="promo_content">
       <div class="promo_prize_amount">
         <img
           src="/promo/winter_promo/prize_plate.webp"
@@ -51,7 +36,7 @@
 
       <div class="promo_description">{{ $t('winter_promo_description') }}</div>
 
-      <a @click="$emit('go-to-external-link', props.externalLink.url)" class="promo_button">
+      <a @click="handleButtonClick" class="promo_button">
         <div class="promo_button_text">{{ $t('winter_promo_link_text') }}</div>
       </a>
     </div>
@@ -59,30 +44,89 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 
-interface GameInfoProps {
-  thumb: string
-  provider_link: string
-  name: string
-  provider: string
-  gameId: string
-  buttonText: string
-  noDemo?: boolean
-  isUserLogedIn: boolean
-  signUpButton: string
-  externalLink?: {
+interface WinterPromoProps {
+  externalLink: {
     url: string
     localeKey: string
   }
+  videoSrc?: string
+  soundOn?: boolean
+  showVideo?: boolean
+  gameId?: string
 }
 
-const props = defineProps<GameInfoProps>()
+interface WinterPromoEmits {
+  (e: 'go-to-external-link', url: string): void
+}
 
-// Вычисляемое свойство для проверки, отключен ли демо-режим
-const isDemoDisabled = computed(() => {
-  // Используем нестрогую проверку для поддержки разных типов
-  return Boolean(props.noDemo)
+const props = withDefaults(defineProps<WinterPromoProps>(), {
+  videoSrc: 'winter_promo',
+  soundOn: false,
+  showVideo: false,
+})
+
+const emit = defineEmits<WinterPromoEmits>()
+
+const promoVideoRef = ref<HTMLVideoElement | null>(null)
+
+function getPosterPath(src: string): string {
+  return `/video/posters/${src}.webp`
+}
+
+function handleButtonClick(): void {
+  emit('go-to-external-link', props.externalLink.url)
+}
+
+// Безопасная функция для воспроизведения видео
+async function safePlay(video: HTMLVideoElement) {
+  // Проверяем, не прерван ли уже запрос на воспроизведение
+  if (video.paused) {
+    try {
+      await video.play()
+    } catch (error) {
+      // Игнорируем ошибки, если play() был прерван
+      if ((error as DOMException).name !== 'AbortError') {
+        console.error('Ошибка воспроизведения промо-видео:', error)
+      }
+    }
+  }
+}
+
+// Синхронизация звука только если есть видео
+watch(
+  () => props.soundOn,
+  async newValue => {
+    const video = promoVideoRef.value
+    if (props.showVideo && video) {
+      video.muted = !newValue
+      // Если звук включили и видео на паузе, пытаемся запустить
+      if (newValue && video.paused) {
+        await safePlay(video)
+      }
+    }
+  }
+)
+
+onMounted(() => {
+  const video = promoVideoRef.value
+  if (props.showVideo && video) {
+    // Устанавливаем начальное состояние звука
+    video.muted = !props.soundOn
+    // Запускаем воспроизведение
+    safePlay(video)
+  }
+})
+
+onUnmounted(() => {
+  const video = promoVideoRef.value
+  if (video) {
+    // Останавливаем видео и сбрасываем источники, чтобы освободить память
+    video.pause()
+    video.removeAttribute('src')
+    video.load()
+  }
 })
 </script>
 

@@ -1,11 +1,14 @@
 {
-    "play_button": "Gioca ora",
-    "sign_up_button": "Registrati",
-    "final_popup_title": "Evviva, Trends completato!",
-    "final_popup_subtitle": "Ti è piaciuto guardarlo? Scopri qualcosa di nuovo ogni volta che lo riguardi.",
-    "final_popup_button": "Riguarda Trends",
-    "final_popup_evaluation": "Come ti è sembrato?",
-    "pirate_birthday_party": "Unisciti all'equipaggio",
-    "external_link_prize": "2 000 000 EUR",
-    "external_link_description": "in bottino pirata!"
+  "play_button": "Gioca ora",
+  "sign_up_button": "Registrati",
+  "final_popup_title": "Evviva, Trends completato!",
+  "final_popup_subtitle": "Ti è piaciuto guardarlo? Scopri qualcosa di nuovo ogni volta che lo riguardi.",
+  "final_popup_button": "Riguarda Trends",
+  "final_popup_evaluation": "Come ti è sembrato?",
+  "pirate_birthday_party": "Unisciti all'equipaggio",
+  "external_link_prize": "2 000 000 EUR",
+  "external_link_description": "in bottino pirata!",
+  "winter_promo_link_prize": "2 000 000 EUR",
+  "winter_promo_link_text": "Ir para a Lapónia",
+  "winter_promo_description": "em presentes do Pai Natal!"
 }

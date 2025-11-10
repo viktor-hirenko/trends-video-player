@@ -1,11 +1,13 @@
 {
-    "play_button": "Jugar ahora",
-    "sign_up_button": "Registrarme",
-    "final_popup_title": "¡Yay, Trends completado!",
-    "final_popup_subtitle": "¿Te gustó verlo? Descubre algo nuevo cada vez que lo vuelvas a ver.",
-    "final_popup_button": "Ver Trends",
-    "final_popup_evaluation": "¿Qué te pareció la experiencia?",
-    "pirate_birthday_party": "Únete a la tripulación",
-    "external_link_prize": "2 000 000 EUR",
-    "external_link_description": "¡en botín pirata!"
+  "play_button": "Jugar ahora",
+  "sign_up_button": "Registrarme",
+  "final_popup_title": "¡Yay, Trends completado!",
+  "final_popup_subtitle": "¿Te gustó verlo? Descubre algo nuevo cada vez que lo vuelvas a ver.",
+  "final_popup_button": "Ver Trends",
+  "final_popup_evaluation": "¿Qué te pareció la experiencia?",
+  "pirate_birthday_party": "Únete a la tripulación",
+  "external_link_prize": "2 000 000 EUR",
+  "external_link_description": "¡en botín pirata!",
+  "winter_promo_link_text": "¡Rumbo a Laponia!",
+  "winter_promo_description": "en regalos de Santa!"
 }
