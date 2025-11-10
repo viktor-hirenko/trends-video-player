@@ -21,7 +21,7 @@
         "au": "all",
         "global": "all"
       },
-      "dont_hide": false,
+      "dont_hide": true,
       "external_link": {
         "url": "/tournaments/Elfs_Journey1762250904",
         "localeKey": "winter_promo"
