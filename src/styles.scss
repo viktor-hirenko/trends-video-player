@@ -609,57 +609,6 @@ div.video_area::-webkit-scrollbar {
   }
 }
 
-.promo_container {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  pointer-events: none;
-
-  // Полноэкранное промо с видео (телепортировано в контейнер игры) чтобы не было резскго
-  // появлени и исчезновения при изменении контента в gameInfo
-  &.promo_fullscreen {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-
-  // Нижняя плашка без видео
-  &:not(.promo_fullscreen) {
-    height: auto;
-    padding-bottom: 2vh;
-  }
-}
-
-// Стили для видео (только если fullscreen)
-.promo_poster,
-.promo_video {
-  display: none;
-}
-
-.promo_fullscreen .promo_poster,
-.promo_fullscreen .promo_video {
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.promo_fullscreen .promo_video {
-  z-index: 2;
-}
-
 .promo_content {
   position: relative;
   width: 100%;
@@ -670,12 +619,6 @@ div.video_area::-webkit-scrollbar {
   padding-bottom: 3.65vh;
   pointer-events: auto;
   z-index: 10;
-
-  .promo_fullscreen & {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-  }
 }
 
 .promo_description {
