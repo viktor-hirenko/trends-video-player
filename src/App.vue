@@ -222,11 +222,9 @@ interface Game {
   src: string
   supportedCurrencies: string[] | 'all'
   no_demo?: boolean
-  external_link?: {
-    url: string
-    localeKey: string
-  }
+  external_link?: { url: string; localeKey: string }
   dont_hide?: boolean
+  enable_promotion?: boolean // 👈 добавили
 }
 
 // Функции для генерации путей к медиафайлам
@@ -606,11 +604,17 @@ async function handleFirstUserInteraction(event?: Event): Promise<void> {
  */
 function transformGamesData(region: 'global' | 'au'): Game[] {
   return loadedGamesData
-    .filter(game => game.regions[region]) // Фильтруем только игры для нужного региона
+    .filter(
+      game =>
+        game.regions[region] &&
+        // если у игры есть enable_promotion — показываем только когда true;
+        // если ключа нет — показываем всегда
+        (!Object.prototype.hasOwnProperty.call(game, 'enable_promotion') ||
+          game.enable_promotion === true)
+    )
     .map(game => {
       const regionData = game.regions[region]!
-
-      const transformed = {
+      return {
         name: game.name,
         provider: regionData.provider,
         provider_slug: regionData.provider_slug,
@@ -620,8 +624,8 @@ function transformGamesData(region: 'global' | 'au'): Game[] {
         no_demo: game.no_demo,
         external_link: game.external_link,
         dont_hide: game.dont_hide,
+        enable_promotion: (game as any).enable_promotion ?? undefined, //
       }
-      return transformed
     })
 }
 

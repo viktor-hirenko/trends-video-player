@@ -31,6 +31,7 @@ export interface Game {
     localeKey: string
   }
   dont_hide?: boolean
+  enable_promotion?: boolean
 }
 
 /**

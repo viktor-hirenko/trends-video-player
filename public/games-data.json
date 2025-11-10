@@ -21,7 +21,7 @@
         "au": "all",
         "global": "all"
       },
-      "dont_hide": true,
+      "dont_hide": false,
       "external_link": {
         "url": "/tournaments/Elfs_Journey1762250904",
         "localeKey": "winter_promo"
@@ -66,12 +66,7 @@
       "supportedCurrencies": {
         "au": "all",
         "global": "all"
-      },
-      "external_link": {
-        "url": "/tournaments/test",
-        "localeKey": "pirate_birthday_party"
-      },
-      "enable_promotion": true
+      }
     },
     {
       "name": "Evil Bet Shoot Them All",
@@ -91,12 +86,7 @@
       "supportedCurrencies": {
         "au": "all",
         "global": "all"
-      },
-      "external_link": {
-        "url": "/tournaments/Elfs_Journey1762250904",
-        "localeKey": "winter_promo"
-      },
-      "enable_promotion": true
+      }
     },
     {
       "name": "Coins of Leprecaun Hold And Win",
