@@ -1,6 +1,5 @@
 <template>
   <div class="game_info_container" :class="{ 'no-background': props.externalLink }">
-    //
     <!-- Стандартные элементы отображаются только если нет external_link -->
     <template v-if="!props.externalLink">
       <img class="game_info_thumb" :src="props.thumb" alt="" />
