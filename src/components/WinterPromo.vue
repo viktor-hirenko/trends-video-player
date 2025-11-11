@@ -20,8 +20,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-
 interface WinterPromoProps {
   externalLink: {
     url: string
@@ -30,7 +28,6 @@ interface WinterPromoProps {
   prizeLabel: string
   description: string
   ctaLabel: string
-  link?: string
 }
 
 const props = defineProps<WinterPromoProps>()
@@ -38,8 +35,6 @@ const props = defineProps<WinterPromoProps>()
 const emit = defineEmits<{
   (event: 'go-to-external-link', url: string): void
 }>()
-
-const ctaHref = computed(() => props.link ?? '#')
 
 function handleClick(): void {
   emit('go-to-external-link', props.externalLink.url)
