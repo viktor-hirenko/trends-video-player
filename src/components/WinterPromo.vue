@@ -94,7 +94,7 @@ function handleClick(): void {
     transform: translateX(-50%) translateY(-65%);
     width: 84%;
     height: 50%;
-    background-image: url('/promo/winter_promo/snow.svg');
+    background-image: url('/promo/winter_promo/snow.webp');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: bottom;
