@@ -1,11 +1,14 @@
 {
-    "play_button": "Jouer",
-    "sign_up_button": "Inscription",
-    "final_popup_title": "Youpi, Trends terminé!",
-    "final_popup_subtitle": "Ça t'a plu de regarder? Découvre quelque chose de nouveau à chaque fois que tu regardes.",
-    "final_popup_button": "Revoir Trends",
-    "final_popup_evaluation": "Comment as-tu trouvé l'expérience?",
-    "pirate_birthday_party": "Rejoignez l'équipage",
-    "external_link_prize": "2 000 000 EUR",
-    "external_link_description": "en butin de pirate!"
+  "play_button": "Jouer",
+  "sign_up_button": "Inscription",
+  "final_popup_title": "Youpi, Trends terminé!",
+  "final_popup_subtitle": "Ça t'a plu de regarder? Découvre quelque chose de nouveau à chaque fois que tu regardes.",
+  "final_popup_button": "Revoir Trends",
+  "final_popup_evaluation": "Comment as-tu trouvé l'expérience?",
+  "pirate_birthday_party": "Rejoignez l'équipage",
+  "external_link_prize": "2 000 000 EUR",
+  "external_link_description": "en butin de pirate!",
+  "winter_promo_link_prize": "2 000 000 EUR",
+  "winter_promo_link_text": "En route pour la Laponie",
+  "winter_promo_description": "en cadeaux  du Père Noël !"
 }

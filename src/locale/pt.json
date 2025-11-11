@@ -1,11 +1,14 @@
 {
-    "play_button": "Jogar agora",
-    "sign_up_button": "Cadastre-se",
-    "final_popup_title": "Eba, Trends finalizado!",
-    "final_popup_subtitle": "Você gostou? Descubra algo novo toda vez que assistir de novo.",
-    "final_popup_button": "Rever Trends",
-    "final_popup_evaluation": "O que achou da experiência?",
-    "pirate_birthday_party": "Junte-se à tripulação",
-    "external_link_prize": "2 000 000 EUR",
-    "external_link_description": "em tesouro pirata!"
+  "play_button": "Jogar agora",
+  "sign_up_button": "Cadastre-se",
+  "final_popup_title": "Eba, Trends finalizado!",
+  "final_popup_subtitle": "Você gostou? Descubra algo novo toda vez que assistir de novo.",
+  "final_popup_button": "Rever Trends",
+  "final_popup_evaluation": "O que achou da experiência?",
+  "pirate_birthday_party": "Junte-se à tripulação",
+  "external_link_prize": "2 000 000 EUR",
+  "external_link_description": "em tesouro pirata!",
+  "winter_promo_link_prize": "2 000 000 EUR",
+  "winter_promo_link_text": "Ir para a Lapónia",
+  "winter_promo_description": "em presentes do Pai Natal!"
 }

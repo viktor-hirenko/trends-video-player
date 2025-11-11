@@ -1,0 +1,1704 @@
+{
+  "version": "25.08",
+  "lastUpdated": "2025-11-10",
+  "games": [
+    {
+      "name": "Valley of The Gods",
+      "regions": {
+        "au": {
+          "game_slug": "valleyofthegods",
+          "provider": "Yggdrasil",
+          "provider_slug": "yggdrasil"
+        },
+        "global": {
+          "game_slug": "valleyofthegods",
+          "provider": "Yggdrasil",
+          "provider_slug": "yggdrasil"
+        }
+      },
+      "src": "valleyofthegods",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Hotfire Coins 2",
+      "regions": {
+        "au": {
+          "game_slug": "hotfire_coins_2",
+          "provider": "Enjoy Gaming",
+          "provider_slug": "enjoygaming_"
+        },
+        "global": {
+          "game_slug": "hotfire_coins_2",
+          "provider": "Enjoy Gaming",
+          "provider_slug": "enjoygaming_"
+        }
+      },
+      "src": "hotfire_coins_2",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Winter Promo",
+      "regions": {
+        "au": {
+          "game_slug": "winter_promo",
+          "provider": "winter_promo",
+          "provider_slug": "winter_promo"
+        },
+        "global": {
+          "game_slug": "winter_promo",
+          "provider": "winter_promo",
+          "provider_slug": "winter_promo"
+        }
+      },
+      "src": "winter_promo",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "dont_hide": true,
+      "external_link": {
+        "url": "/welcome_to_lapland?utm_source=site&utm_medium=reels&utm_campaign=welcome_to_lapland",
+        "localeKey": "winter_promo"
+      },
+      "enable_promotion": true
+    },
+    {
+      "name": "Trinity Egypt Link",
+      "regions": {
+        "au": {
+          "game_slug": "trinity_egypt_link",
+          "provider": "Fugaso",
+          "provider_slug": "fugaso"
+        },
+        "global": {
+          "game_slug": "trinity_egypt_link",
+          "provider": "Fugaso",
+          "provider_slug": "fugaso"
+        }
+      },
+      "src": "trinity_egypt_link",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Wild Wild Steel",
+      "regions": {
+        "au": {
+          "game_slug": "wild_wild_steel",
+          "provider": "Popiplay",
+          "provider_slug": "popiplay"
+        },
+        "global": {
+          "game_slug": "wild_wild_steel",
+          "provider": "Popiplay",
+          "provider_slug": "popiplay"
+        }
+      },
+      "src": "wild_wild_steel",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Twist",
+      "regions": {
+        "au": {
+          "game_slug": "twist",
+          "provider": "InOUT",
+          "provider_slug": "inout"
+        },
+        "global": {
+          "game_slug": "twist",
+          "provider": "InOUT",
+          "provider_slug": "inout"
+        }
+      },
+      "src": "twist",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Tripple Fortune",
+      "regions": {
+        "au": {
+          "game_slug": "tripple_fortune",
+          "provider": "NetGame",
+          "provider_slug": "netgame"
+        },
+        "global": {
+          "game_slug": "tripple_fortune",
+          "provider": "NetGame",
+          "provider_slug": "netgame"
+        }
+      },
+      "src": "tripple_fortune",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Wild Spin",
+      "regions": {
+        "au": {
+          "game_slug": "wild_spin",
+          "provider": "Platipus",
+          "provider_slug": "platipus"
+        },
+        "global": {
+          "game_slug": "wild_spin",
+          "provider": "Platipus",
+          "provider_slug": "platipus"
+        }
+      },
+      "src": "wild_spin",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Book of Bamboo",
+      "regions": {
+        "au": {
+          "game_slug": "book_of_bamboo",
+          "provider": "Onlyplay",
+          "provider_slug": "onlyplay"
+        },
+        "global": {
+          "game_slug": "book_of_bamboo",
+          "provider": "Onlyplay",
+          "provider_slug": "onlyplay"
+        }
+      },
+      "src": "book_of_bamboo",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Striking Diamond 2",
+      "regions": {
+        "au": {
+          "game_slug": "striking_diamond_2_running_wins",
+          "provider": "Fugaso",
+          "provider_slug": "fugaso"
+        },
+        "global": {
+          "game_slug": "striking_diamond_2_running_wins",
+          "provider": "Fugaso",
+          "provider_slug": "fugaso"
+        }
+      },
+      "src": "striking_diamond_2_running_wins",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Buffalos Sun 2",
+      "regions": {
+        "au": {
+          "game_slug": "buffalos_sun_2",
+          "provider": "Zillion",
+          "provider_slug": "zillion"
+        },
+        "global": {
+          "game_slug": "buffalos_sun_2",
+          "provider": "Zillion",
+          "provider_slug": "zillion"
+        }
+      },
+      "src": "buffalos_sun_2",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Luck of Panda: Bonus Combo",
+      "regions": {
+        "au": {
+          "game_slug": "luck_of_panda_bonus_combo",
+          "provider": "NetGame",
+          "provider_slug": "netgame"
+        },
+        "global": {
+          "game_slug": "luck_of_panda_bonus_combo",
+          "provider": "NetGame",
+          "provider_slug": "netgame"
+        }
+      },
+      "src": "luck_of_panda_bonus_combo",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Coins of Leprechaun - Hold & Win",
+      "regions": {
+        "au": {
+          "game_slug": "coins_of_leprecaun_hold_and_win",
+          "provider": "Betsoft",
+          "provider_slug": "betsoft"
+        },
+        "global": {
+          "game_slug": "coins_of_leprecaun_hold_and_win",
+          "provider": "Betsoft",
+          "provider_slug": "betsoft"
+        }
+      },
+      "src": "coins_of_leprecaun_hold_and_win",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Luck88Quick",
+      "regions": {
+        "au": {
+          "game_slug": "luck88_quick",
+          "provider": "KA Gaming",
+          "provider_slug": "kagaming"
+        },
+        "global": {
+          "game_slug": "luck88_quick",
+          "provider": "KA Gaming",
+          "provider_slug": "kagaming"
+        }
+      },
+      "src": "luck88_quick",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Caishen's Gifts",
+      "regions": {
+        "au": {
+          "game_slug": "caishens_gifts",
+          "provider": "Platipus",
+          "provider_slug": "platipus"
+        },
+        "global": {
+          "game_slug": "caishens_gifts",
+          "provider": "Platipus",
+          "provider_slug": "platipus"
+        }
+      },
+      "src": "caishens_gifts",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Moneyfest",
+      "regions": {
+        "au": {
+          "game_slug": "moneyfest",
+          "provider": "Popiplay",
+          "provider_slug": "popiplay"
+        },
+        "global": {
+          "game_slug": "moneyfest",
+          "provider": "Popiplay",
+          "provider_slug": "popiplay"
+        }
+      },
+      "src": "moneyfest",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Dynamite Dwarfs",
+      "regions": {
+        "au": {
+          "game_slug": "dynamite_dwarfs",
+          "provider": "Zillion",
+          "provider_slug": "zillion"
+        },
+        "global": {
+          "game_slug": "dynamite_dwarfs",
+          "provider": "Zillion",
+          "provider_slug": "zillion"
+        }
+      },
+      "src": "dynamite_dwarfs",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Spicy candies rockblocks",
+      "regions": {
+        "au": {
+          "game_slug": "spicy_candies_rockblocks",
+          "provider": "Mascot",
+          "provider_slug": "mascot"
+        },
+        "global": {
+          "game_slug": "spicy_candies_rockblocks",
+          "provider": "Mascot",
+          "provider_slug": "mascot"
+        }
+      },
+      "src": "spicy_candies_rockblocks",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Red Hot 100",
+      "regions": {
+        "au": {
+          "game_slug": "red_hot_100",
+          "provider": "TrueLab",
+          "provider_slug": "truelab"
+        },
+        "global": {
+          "game_slug": "red_hot_100",
+          "provider": "TrueLab",
+          "provider_slug": "truelab"
+        }
+      },
+      "src": "red_hot_100",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Blackjack",
+      "regions": {
+        "au": {
+          "game_slug": "hp_blackjack",
+          "provider": "100HP Gaming",
+          "provider_slug": "100hp_gaming"
+        },
+        "global": {
+          "game_slug": "hp_blackjack",
+          "provider": "100HP Gaming",
+          "provider_slug": "100hp_gaming"
+        }
+      },
+      "src": "hp_blackjack",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Scandi Pigs",
+      "regions": {
+        "au": {
+          "game_slug": "scandipigs",
+          "provider": "Gamebeat",
+          "provider_slug": "gamebeat"
+        },
+        "global": {
+          "game_slug": "scandipigs",
+          "provider": "Gamebeat",
+          "provider_slug": "gamebeat"
+        }
+      },
+      "src": "scandipigs",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Hold My Beer",
+      "regions": {
+        "au": {
+          "game_slug": "hold_my_beer",
+          "provider": "TrueLab",
+          "provider_slug": "truelab"
+        },
+        "global": {
+          "game_slug": "hold_my_beer",
+          "provider": "TrueLab",
+          "provider_slug": "truelab"
+        }
+      },
+      "src": "hold_my_beer",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Fishing Splash",
+      "regions": {
+        "au": {
+          "game_slug": "fishing_splash",
+          "provider": "Onlyplay",
+          "provider_slug": "onlyplay"
+        },
+        "global": {
+          "game_slug": "fishing_splash",
+          "provider": "Onlyplay",
+          "provider_slug": "onlyplay"
+        }
+      },
+      "src": "fishing_splash",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Crown Supreme Hold And Win",
+      "regions": {
+        "au": {
+          "game_slug": "crown_supreme_hold_and_win",
+          "provider": "Iconic 21",
+          "provider_slug": "iconic21_slots"
+        },
+        "global": {
+          "game_slug": "crown_supreme_hold_and_win",
+          "provider": "Iconic 21",
+          "provider_slug": "iconic21_slots"
+        }
+      },
+      "src": "crown_supreme_hold_and_win",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Beersburg Fest Hold And Win",
+      "regions": {
+        "au": {
+          "game_slug": "beersburg_fest_hold_and_win",
+          "provider": "1spin4win",
+          "provider_slug": "1spin4win"
+        },
+        "global": {
+          "game_slug": "beersburg_fest_hold_and_win",
+          "provider": "1spin4win",
+          "provider_slug": "1spin4win"
+        }
+      },
+      "src": "beersburg_fest_hold_and_win",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Atomic Coins RUNNING WINS",
+      "regions": {
+        "au": {
+          "game_slug": "atomic_coins_running_wins",
+          "provider": "Fugaso",
+          "provider_slug": "fugaso"
+        },
+        "global": {
+          "game_slug": "atomic_coins_running_wins",
+          "provider": "Fugaso",
+          "provider_slug": "fugaso"
+        }
+      },
+      "src": "atomic_coins_running_wins",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Chicken Pirate",
+      "regions": {
+        "au": {
+          "game_slug": "chicken_pirate",
+          "provider": "100HP Gaming",
+          "provider_slug": "100hp_gaming"
+        },
+        "global": {
+          "game_slug": "chicken_pirate",
+          "provider": "100HP Gaming",
+          "provider_slug": "100hp_gaming"
+        }
+      },
+      "src": "chicken_pirate",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Cinderellas Glass Slipper",
+      "regions": {
+        "au": {
+          "game_slug": "cinderellas_glass_slipper",
+          "provider": "KA Gaming",
+          "provider_slug": "kagaming"
+        },
+        "global": {
+          "game_slug": "cinderellas_glass_slipper",
+          "provider": "KA Gaming",
+          "provider_slug": "kagaming"
+        }
+      },
+      "src": "cinderellas_glass_slipper",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Lucky Lager x9990",
+      "regions": {
+        "au": {
+          "game_slug": "lucky_lager_x9990",
+          "provider": "Bgaming",
+          "provider_slug": "bgaming"
+        },
+        "global": {
+          "game_slug": "lucky_lager_x9990",
+          "provider": "Bgaming",
+          "provider_slug": "bgaming"
+        }
+      },
+      "src": "lucky_lager_x9990",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Fruit Temptation",
+      "regions": {
+        "au": {
+          "game_slug": "fruit_temptation",
+          "provider": "Dream Play",
+          "provider_slug": "dream_play"
+        },
+        "global": {
+          "game_slug": "fruit_temptation",
+          "provider": "Dream Play",
+          "provider_slug": "dream_play"
+        }
+      },
+      "src": "fruit_temptation",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Disco Farm Hold And Win",
+      "regions": {
+        "au": {
+          "game_slug": "disco_farm_hold_and_win",
+          "provider": "Betsoft",
+          "provider_slug": "betsoft"
+        },
+        "global": {
+          "game_slug": "disco_farm_hold_and_win",
+          "provider": "Betsoft",
+          "provider_slug": "betsoft"
+        }
+      },
+      "src": "disco_farm_hold_and_win",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Booming Fruits 256",
+      "regions": {
+        "au": {
+          "game_slug": "booming_fruits_256",
+          "provider": "1spin4win",
+          "provider_slug": "1spin4win"
+        },
+        "global": {
+          "game_slug": "booming_fruits_256",
+          "provider": "1spin4win",
+          "provider_slug": "1spin4win"
+        }
+      },
+      "src": "booming_fruits_256",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Gold Oktoberfest",
+      "regions": {
+        "au": {
+          "game_slug": "gold_oktoberfest",
+          "provider": "Onlyplay",
+          "provider_slug": "onlyplay"
+        },
+        "global": {
+          "game_slug": "gold_oktoberfest",
+          "provider": "Onlyplay",
+          "provider_slug": "onlyplay"
+        }
+      },
+      "src": "gold_oktoberfest",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Bonanza Trillion",
+      "regions": {
+        "au": {
+          "game_slug": "bonanza_trillion",
+          "provider": "Bgaming",
+          "provider_slug": "bgaming"
+        },
+        "global": {
+          "game_slug": "bonanza_trillion",
+          "provider": "Bgaming",
+          "provider_slug": "bgaming"
+        }
+      },
+      "src": "bonanza_trillion",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Jiggly Joker",
+      "regions": {
+        "au": {
+          "game_slug": "jiggly_joker",
+          "provider": "Dream Play",
+          "provider_slug": "dream_play"
+        },
+        "global": {
+          "game_slug": "jiggly_joker",
+          "provider": "Dream Play",
+          "provider_slug": "dream_play"
+        }
+      },
+      "src": "jiggly_joker",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Angry Tiki Doublemax",
+      "regions": {
+        "au": {
+          "game_slug": "angry_tiki_doublemax",
+          "provider": "Yggdrasil",
+          "provider_slug": "yggdrasil"
+        },
+        "global": {
+          "game_slug": "angry_tiki_doublemax",
+          "provider": "Yggdrasil",
+          "provider_slug": "yggdrasil"
+        }
+      },
+      "src": "angry_tiki_doublemax",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Scratch the Bank",
+      "regions": {
+        "au": {
+          "game_slug": "scratch_the_bank",
+          "provider": "Mascot",
+          "provider_slug": "mascot"
+        },
+        "global": {
+          "game_slug": "scratch_the_bank",
+          "provider": "Mascot",
+          "provider_slug": "mascot"
+        }
+      },
+      "src": "scratch_the_bank",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Hotfire Diamonds",
+      "regions": {
+        "au": {
+          "game_slug": "hotfire_diamonds",
+          "provider": "Enjoy Gaming",
+          "provider_slug": "enjoygaming_"
+        },
+        "global": {
+          "game_slug": "hotfire_diamonds",
+          "provider": "Enjoy Gaming",
+          "provider_slug": "enjoygaming_"
+        }
+      },
+      "src": "hotfire_diamonds",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Coins of Ra Power Deluxe - Hold & Win",
+      "regions": {
+        "au": {
+          "game_slug": "coins_of_ra_power_deluxe_hold_and_win",
+          "provider": "Betsoft",
+          "provider_slug": "betsoft"
+        },
+        "global": {
+          "game_slug": "coins_of_ra_power_deluxe_hold_and_win",
+          "provider": "Betsoft",
+          "provider_slug": "betsoft"
+        }
+      },
+      "src": "coins_of_ra_power_deluxe_hold_and_win",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Speed Freaks",
+      "regions": {
+        "au": {
+          "game_slug": "speed_freaks",
+          "provider": "Yggdrasil",
+          "provider_slug": "yggdrasil"
+        },
+        "global": {
+          "game_slug": "speed_freaks",
+          "provider": "Yggdrasil",
+          "provider_slug": "yggdrasil"
+        }
+      },
+      "src": "speed_freaks",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Steam Wilds Megaways",
+      "regions": {
+        "au": {
+          "game_slug": "steam_wilds",
+          "provider": "ThunderSpin",
+          "provider_slug": "thunderspin"
+        },
+        "global": {
+          "game_slug": "steam_wilds",
+          "provider": "ThunderSpin",
+          "provider_slug": "thunderspin"
+        }
+      },
+      "src": "steam_wilds",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Live Roulette French",
+      "regions": {
+        "au": {
+          "game_slug": "live_roulette_french_vip",
+          "provider": "Platipus Live",
+          "provider_slug": "platipus_live"
+        },
+        "global": {
+          "game_slug": "live_roulette_french_vip",
+          "provider": "Platipus Live",
+          "provider_slug": "platipus_live"
+        }
+      },
+      "src": "live_roulette_french_vip",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": true,
+      "dont_hide": false
+    },
+    {
+      "name": "Playful Kitten buy feature",
+      "regions": {
+        "au": {
+          "game_slug": "playful_kitten_buy_feature",
+          "provider": "KA Gaming",
+          "provider_slug": "kagaming"
+        },
+        "global": {
+          "game_slug": "playful_kitten_buy_feature",
+          "provider": "KA Gaming",
+          "provider_slug": "kagaming"
+        }
+      },
+      "src": "playful_kitten_buy_feature",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Joker vs Joker",
+      "regions": {
+        "au": {
+          "game_slug": "joker_vs_joker",
+          "provider": "Bgaming",
+          "provider_slug": "bgaming"
+        },
+        "global": {
+          "game_slug": "joker_vs_joker",
+          "provider": "Bgaming",
+          "provider_slug": "bgaming"
+        }
+      },
+      "src": "joker_vs_joker",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Candy stash deluxe",
+      "regions": {
+        "au": {
+          "game_slug": "candy_stash_deluxe",
+          "provider": "Zillion",
+          "provider_slug": "zillion"
+        },
+        "global": {
+          "game_slug": "candy_stash_deluxe",
+          "provider": "Zillion",
+          "provider_slug": "zillion"
+        }
+      },
+      "src": "candy_stash_deluxe",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Wild Classic",
+      "regions": {
+        "au": {
+          "game_slug": "wild_classic",
+          "provider": "Platipus",
+          "provider_slug": "platipus"
+        },
+        "global": {
+          "game_slug": "wild_classic",
+          "provider": "Platipus",
+          "provider_slug": "platipus"
+        }
+      },
+      "src": "wild_classic",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Frontier lock and load",
+      "regions": {
+        "au": {
+          "game_slug": "frontier_lock_and_load",
+          "provider": "Yggdrasil",
+          "provider_slug": "yggdrasil"
+        },
+        "global": {
+          "game_slug": "frontier_lock_and_load",
+          "provider": "Yggdrasil",
+          "provider_slug": "yggdrasil"
+        }
+      },
+      "src": "frontier_lock_and_load",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Dolphin`s Wealth fortune",
+      "regions": {
+        "au": {
+          "game_slug": "dolphins_wealth_fortune",
+          "provider": "1spin4win",
+          "provider_slug": "1spin4win"
+        },
+        "global": {
+          "game_slug": "dolphins_wealth_fortune",
+          "provider": "1spin4win",
+          "provider_slug": "1spin4win"
+        }
+      },
+      "src": "dolphins_wealth_fortune",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "3 pots of lunar wolf hold and win",
+      "regions": {
+        "au": {
+          "game_slug": "3_pots_of_lunar_wolf_hold_and_win",
+          "provider": "Betsoft",
+          "provider_slug": "betsoft"
+        },
+        "global": {
+          "game_slug": "3_pots_of_lunar_wolf_hold_and_win",
+          "provider": "Betsoft",
+          "provider_slug": "betsoft"
+        }
+      },
+      "src": "3_pots_of_lunar_wolf_hold_and_win",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Lucky Scarab Claw",
+      "regions": {
+        "au": {
+          "game_slug": "lucky_scarab_claw_wild_respins",
+          "provider": "Clawbuster",
+          "provider_slug": "clawbuster"
+        },
+        "global": {
+          "game_slug": "lucky_scarab_claw_wild_respins",
+          "provider": "Clawbuster",
+          "provider_slug": "clawbuster"
+        }
+      },
+      "src": "lucky_scarab_claw_wild_respins",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Bank maker",
+      "regions": {
+        "au": {
+          "game_slug": "bank_maker",
+          "provider": "Mancala",
+          "provider_slug": "mancala"
+        },
+        "global": {
+          "game_slug": "bank_maker",
+          "provider": "Mancala",
+          "provider_slug": "mancala"
+        }
+      },
+      "src": "bank_maker",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "3×5 Hold the Spin",
+      "regions": {
+        "au": {
+          "game_slug": "3x5_hold_the_spin",
+          "provider": "Gamzix",
+          "provider_slug": "gamzix"
+        },
+        "global": {
+          "game_slug": "3x5_hold_the_spin",
+          "provider": "Gamzix",
+          "provider_slug": "gamzix"
+        }
+      },
+      "src": "3x5_hold_the_spin",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Knock Knock",
+      "regions": {
+        "au": {
+          "game_slug": "knock_knock",
+          "provider": "Iconic21 Slots",
+          "provider_slug": "iconic21_slots"
+        },
+        "global": {
+          "game_slug": "knock_knock",
+          "provider": "Iconic21 Slots",
+          "provider_slug": "iconic21_slots"
+        }
+      },
+      "src": "knock_knock",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Wonder 7s",
+      "regions": {
+        "au": {
+          "game_slug": "wonder_7s",
+          "provider": "Casino Technology Interactive",
+          "provider_slug": "technology"
+        },
+        "global": {
+          "game_slug": "wonder_7s",
+          "provider": "Casino Technology Interactive",
+          "provider_slug": "technology"
+        }
+      },
+      "src": "wonder_7s",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Magic Treasures",
+      "regions": {
+        "au": {
+          "game_slug": "magic_treasures",
+          "provider": "Zillion",
+          "provider_slug": "zillion"
+        },
+        "global": {
+          "game_slug": "magic_treasures",
+          "provider": "Zillion",
+          "provider_slug": "zillion"
+        }
+      },
+      "src": "magic_treasures",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Allways Egypt Fortune",
+      "regions": {
+        "au": {
+          "game_slug": "allways_egypt_fortune",
+          "provider": "1spin4win",
+          "provider_slug": "1spin4win"
+        },
+        "global": {
+          "game_slug": "allways_egypt_fortune",
+          "provider": "1spin4win",
+          "provider_slug": "1spin4win"
+        }
+      },
+      "src": "allways_egypt_fortune",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Wild Kangaroo Spins",
+      "regions": {
+        "au": {
+          "game_slug": "wild_kangaroo_spins",
+          "provider": "Reevo",
+          "provider_slug": "reevo"
+        },
+        "global": {
+          "game_slug": "wild_kangaroo_spins",
+          "provider": "Reevo",
+          "provider_slug": "reevo"
+        }
+      },
+      "src": "wild_kangaroo_spins",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Ink Painting Master",
+      "regions": {
+        "au": {
+          "game_slug": "ink_painting_master",
+          "provider": "KA Gaming",
+          "provider_slug": "kagaming"
+        },
+        "global": {
+          "game_slug": "ink_painting_master",
+          "provider": "KA Gaming",
+          "provider_slug": "kagaming"
+        }
+      },
+      "src": "ink_painting_master",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Diamond Chest Hold N Link",
+      "regions": {
+        "au": {
+          "game_slug": "diamond_chest_hold_n_link",
+          "provider": "NetGame",
+          "provider_slug": "netgame"
+        },
+        "global": {
+          "game_slug": "diamond_chest_hold_n_link",
+          "provider": "NetGame",
+          "provider_slug": "netgame"
+        }
+      },
+      "src": "diamond_chest_hold_n_link",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Sweet Crumbles",
+      "regions": {
+        "au": {
+          "game_slug": "sweet_crumbles",
+          "provider": "Dream Play",
+          "provider_slug": "dream_play"
+        },
+        "global": {
+          "game_slug": "sweet_crumbles",
+          "provider": "Dream Play",
+          "provider_slug": "dream_play"
+        }
+      },
+      "src": "sweet_crumbles",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Fruitjitsu",
+      "regions": {
+        "au": {
+          "game_slug": "fruitjitsu",
+          "provider": "Yggdrasil",
+          "provider_slug": "yggdrasil"
+        },
+        "global": {
+          "game_slug": "fruitjitsu",
+          "provider": "Yggdrasil",
+          "provider_slug": "yggdrasil"
+        }
+      },
+      "src": "fruitjitsu",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Diegos Spicy Truck",
+      "regions": {
+        "au": {
+          "game_slug": "diegos_spicy_truck",
+          "provider": "Mancala",
+          "provider_slug": "mancala"
+        },
+        "global": {
+          "game_slug": "diegos_spicy_truck",
+          "provider": "Mancala",
+          "provider_slug": "mancala"
+        }
+      },
+      "src": "diegos_spicy_truck",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Cats Soup",
+      "regions": {
+        "au": {
+          "game_slug": "cats_soup",
+          "provider": "Bgaming",
+          "provider_slug": "bgaming"
+        },
+        "global": {
+          "game_slug": "cats_soup",
+          "provider": "Bgaming",
+          "provider_slug": "bgaming"
+        }
+      },
+      "src": "cats_soup",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Veracruz Wild",
+      "regions": {
+        "au": {
+          "game_slug": "veracruz_wild",
+          "provider": "Popiplay",
+          "provider_slug": "popiplay"
+        },
+        "global": {
+          "game_slug": "veracruz_wild",
+          "provider": "Popiplay",
+          "provider_slug": "popiplay"
+        }
+      },
+      "src": "veracruz_wild",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Her Genie Ways",
+      "regions": {
+        "au": {
+          "game_slug": "her_genie_ways",
+          "provider": "Reevo",
+          "provider_slug": "reevo"
+        },
+        "global": {
+          "game_slug": "her_genie_ways",
+          "provider": "Reevo",
+          "provider_slug": "reevo"
+        }
+      },
+      "src": "her_genie_ways",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Power Gems",
+      "regions": {
+        "au": {
+          "game_slug": "power_gems",
+          "provider": "Enjoy Gaming",
+          "provider_slug": "enjoygaming_"
+        },
+        "global": {
+          "game_slug": "power_gems",
+          "provider": "Enjoy Gaming",
+          "provider_slug": "enjoygaming_"
+        }
+      },
+      "src": "power_gems",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Reel the Groove",
+      "regions": {
+        "au": {
+          "game_slug": "reel_the_groove",
+          "provider": "Yggdrasil",
+          "provider_slug": "yggdrasil"
+        },
+        "global": {
+          "game_slug": "reel_the_groove",
+          "provider": "Yggdrasil",
+          "provider_slug": "yggdrasil"
+        }
+      },
+      "src": "reel_the_groove",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Diamond style",
+      "regions": {
+        "au": {
+          "game_slug": "diamond_style",
+          "provider": "Onlyplay",
+          "provider_slug": "onlyplay"
+        },
+        "global": {
+          "game_slug": "diamond_style",
+          "provider": "Onlyplay",
+          "provider_slug": "onlyplay"
+        }
+      },
+      "src": "diamond_style",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Hong Yun Bao Ultra Bonus",
+      "regions": {
+        "au": {
+          "game_slug": "hong_yun_bao_ultra_bonus",
+          "provider": "Zephyr Slots",
+          "provider_slug": "zephyr_slots"
+        },
+        "global": {
+          "game_slug": "hong_yun_bao_ultra_bonus",
+          "provider": "Zephyr Slots",
+          "provider_slug": "zephyr_slots"
+        }
+      },
+      "src": "hong_yun_bao_ultra_bonus",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Savannah Spins",
+      "regions": {
+        "au": {
+          "game_slug": "savannah_spins",
+          "provider": "Thunderspin",
+          "provider_slug": "thunderspin"
+        },
+        "global": {
+          "game_slug": "savannah_spins",
+          "provider": "Thunderspin",
+          "provider_slug": "thunderspin"
+        }
+      },
+      "src": "savannah_spins",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Sticky Fruitstorm",
+      "regions": {
+        "au": {
+          "game_slug": "sticky_fruitstorm",
+          "provider": "Dream Play",
+          "provider_slug": "dream_play"
+        },
+        "global": {
+          "game_slug": "sticky_fruitstorm",
+          "provider": "Dream Play",
+          "provider_slug": "dream_play"
+        }
+      },
+      "src": "sticky_fruitstorm",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Chicken Road 2.0",
+      "regions": {
+        "au": {
+          "game_slug": "chicken_road_2_0",
+          "provider": "InOUT",
+          "provider_slug": "inout"
+        },
+        "global": {
+          "game_slug": "chicken_road_2_0",
+          "provider": "InOUT",
+          "provider_slug": "inout"
+        }
+      },
+      "src": "chicken_road_2_0",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Red Planet: Rapid Link",
+      "regions": {
+        "au": {
+          "game_slug": "red_planet_rapid_link",
+          "provider": "NetGame",
+          "provider_slug": "netgame"
+        },
+        "global": {
+          "game_slug": "red_planet_rapid_link",
+          "provider": "NetGame",
+          "provider_slug": "netgame"
+        }
+      },
+      "src": "red_planet_rapid_link",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Evil Bet Shoot Them All",
+      "regions": {
+        "au": {
+          "game_slug": "evil_bet_shoot_them_all",
+          "provider": "Mascot",
+          "provider_slug": "mascot"
+        },
+        "global": {
+          "game_slug": "evil_bet_shoot_them_all",
+          "provider": "Mascot",
+          "provider_slug": "mascot"
+        }
+      },
+      "src": "evil_bet_shoot_them_all",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Double Joker: Fever",
+      "regions": {
+        "au": {
+          "game_slug": "double_joker_fever_",
+          "provider": "Kendoo",
+          "provider_slug": "kendoo"
+        },
+        "global": {
+          "game_slug": "double_joker_fever_",
+          "provider": "Kendoo",
+          "provider_slug": "kendoo"
+        }
+      },
+      "src": "double_joker_fever_",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Lock n Load",
+      "regions": {
+        "au": {
+          "game_slug": "lock_n_load",
+          "provider": "Yggdrasil",
+          "provider_slug": "yggdrasil"
+        },
+        "global": {
+          "game_slug": "lock_n_load",
+          "provider": "Yggdrasil",
+          "provider_slug": "yggdrasil"
+        }
+      },
+      "src": "lock_n_load",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": false,
+      "dont_hide": false
+    },
+    {
+      "name": "Baccarat 4",
+      "regions": {
+        "au": {
+          "game_slug": "baccarat_4",
+          "provider": "Luckystreak",
+          "provider_slug": "luckystreak"
+        },
+        "global": {
+          "game_slug": "baccarat_4",
+          "provider": "Luckystreak",
+          "provider_slug": "luckystreak"
+        }
+      },
+      "src": "baccarat_4",
+      "supportedCurrencies": {
+        "au": "all",
+        "global": "all"
+      },
+      "no_demo": true,
+      "dont_hide": false
+    }
+  ]
+}

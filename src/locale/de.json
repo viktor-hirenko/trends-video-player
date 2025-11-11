@@ -1,11 +1,14 @@
 {
-    "play_button": "Jetzt spielen",
-    "sign_up_button": "Registrieren",
-    "final_popup_title": "Yay, Trends abgeschlossen",
-    "final_popup_subtitle": "Gefallen dir die Trends? Entdecke jedes Mal etwas Neues, wenn du erneut ansiehst.",
-    "final_popup_button": "Trends ansehen",
-    "final_popup_evaluation": "Wie fandest du es?",
-    "pirate_birthday_party": "Tritt der Crew bei",
-    "external_link_prize": "2 000 000 EUR",
-    "external_link_description": "in Piratenschätzen!"
+  "play_button": "Jetzt spielen",
+  "sign_up_button": "Registrieren",
+  "final_popup_title": "Yay, Trends abgeschlossen",
+  "final_popup_subtitle": "Gefallen dir die Trends? Entdecke jedes Mal etwas Neues, wenn du erneut ansiehst.",
+  "final_popup_button": "Trends ansehen",
+  "final_popup_evaluation": "Wie fandest du es?",
+  "pirate_birthday_party": "Tritt der Crew bei",
+  "external_link_prize": "2 000 000 EUR",
+  "external_link_description": "in Piratenschätzen!",
+  "winter_promo_link_prize": "2 000 000 EUR",
+  "winter_promo_link_text": "Ab nach Lappland",
+  "winter_promo_description": "in Santas Geschenken!"
 }

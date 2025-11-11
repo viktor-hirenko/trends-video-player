@@ -25,3 +25,5 @@ dist-ssr
 .qodo
 /Original video
 /.wrangler
+.localnotes/
+/src/.local

@@ -22,13 +22,18 @@ echo "☁️ Загрузка файлов на R2 бакет..."
 # Функция для загрузки файла
 upload_file() {
     local file_path="$1"
-    local object_key="trends-all-geo/${file_path#dist/}"  # Добавляем префикс trends-all-geo/
+    local object_key="${file_path#dist/}"  # Убираем dist/ из пути, остается trends-all-geo/...
     echo "📤 Загружаю: $object_key"
     node scripts/upload-direct.cjs "$file_path" "$object_key"
 }
 
-# Загрузка всех файлов из папки dist
-find dist -type f \( -name "*.js" -o -name "*.css" -o -name "*.html" -o -name "*.webp" -o -name "*.svg" -o -name "*.mp4" -o -name "*.webm" -o -name "*.json" \) | while read file; do
+# Загрузка всех файлов из папки dist/trends-all-geo, исключая папки video и thumbs
+find dist/trends-all-geo -type f \( -name "*.js" -o -name "*.css" -o -name "*.html" -o -name "*.webp" -o -name "*.svg" -o -name "*.mp4" -o -name "*.webm" -o -name "*.json" \) | while read file; do
+    # Пропускаем файлы из папок video и thumbs
+    if [[ "$file" == *"/video/"* ]] || [[ "$file" == *"/thumbs/"* ]]; then
+        echo "⏭️  Пропускаю: ${file#dist/}"
+        continue
+    fi
     upload_file "$file"
 done
 

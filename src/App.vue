@@ -7,7 +7,9 @@
           :key="game.game_slug"
           :id="game.game_slug"
           class="video_screen"
-          :class="{ 'autoplay-blocked': autoplayBlocked && currentVideoIndex === index }"
+          :class="{
+            'autoplay-blocked': isOverlayActive(index),
+          }"
         >
           <img
             :src="getPosterPath(game.src)"
@@ -28,12 +30,12 @@
           >
             <source
               v-if="shouldLoadSources(index)"
-              :src="`video/webm/${game.src}.webm?3`"
+              :src="`/video/webm/${game.src}.webm?3`"
               type="video/webm"
             />
             <source
               v-if="shouldLoadSources(index)"
-              :src="`video/h264/${game.src}.mp4?3`"
+              :src="`/video/h264/${game.src}.mp4?3`"
               type="video/mp4"
             />
           </video>
@@ -82,56 +84,47 @@
               alt=""
             />
           </transition>
-          
+
           <!-- Большая кнопка воспроизведения для заблокированного автоплея -->
-          <div 
-            v-if="autoplayBlocked && currentVideoIndex === index && shouldLoadMedia(index)"
-            @click="handleFirstUserInteraction($event)"
+          <div
+            v-if="isOverlayActive(index)"
+            @pointerdown="unlockAndPlay($event, index)"
             class="autoplay_blocked_overlay"
           >
             <img src="/icons/play.svg" alt="Запустить видео" class="autoplay_blocked_play_icon" />
           </div>
-          
+
           <div v-if="game.game_slug !== 'final_popup'">
             <img
-              v-if="!autoplayBlocked"
+              v-if="!isOverlayActive(index)"
               class="gradient"
               src="/icons/gradient.svg"
               alt=""
               @click="toggleVideoPause($event)"
             />
             <img
-              @click="toggleSound"
+              @click="toggleSound($event)"
               class="sound_icon"
               :src="soundOn ? './icons/sound.svg' : './icons/sound_off.svg'"
               alt="sound_button"
             />
             <img
               v-if="game.game_slug !== 'final_popup'"
-              @click="toggleLike(game.game_slug)"
+              @click="toggleLike(game.game_slug, $event)"
               class="like_icon"
               :src="isLiked(game.game_slug) ? './icons/like_on.svg' : './icons/like_off.svg'"
               alt="like_button"
             />
-            <GameInfo
-              v-if="shouldLoadMedia(index) && game.game_slug !== 'final_popup'"
-              :thumb="getThumbPath(game.src)"
-              :provider_link="game.provider_slug"
-              :name="game.name"
-              :provider="game.provider"
-              :game-id="game.game_slug"
-              @play-game="onPlayGame"
-              @go-to-provider="onGoToProvider"
-              @go-to-external-link="onGoToExternalLink"
-              :button-text="$t('play_button')"
-              :sign-up-button="$t('sign_up_button')"
-              :no-demo="game.no_demo"
-              :is-user-loged-in="isUserLogedIn"
-              :external-link="game.external_link"
-            />
           </div>
-          <div class="progress_bg" v-if="game.game_slug !== 'final_popup' && shouldLoadMedia(index)"></div>
-          <div class="progress_bar" :style="{ width: videoProgress + '%' }" v-if="game.game_slug !== 'final_popup' && shouldLoadMedia(index)"></div>
+          <div
+            class="progress_bg"
+            v-if="game.game_slug !== 'final_popup' && shouldLoadMedia(index)"
+          ></div>
+          <div
+            class="progress_bar"
+            :style="{ width: videoProgress + '%' }"
+            v-if="game.game_slug !== 'final_popup' && shouldLoadMedia(index)"
+          ></div>
         </div>
       </div>
     </div>
@@ -148,22 +141,56 @@
         style="background-image: url(icons/arrow.svg)"
       ></div>
     </div>
-    <div style="display: none!important; opacity: 0!important; width: 0!important; height: 0!important;">
-      <img src="/icons/like_on.svg" alt="like_on">
-      <img src="/icons/like_off.svg" alt="like_off">
-      <img src="/icons/sound_on.svg" alt="sound_on">
-      <img src="/icons/sound_off.svg" alt="sound_off">
-      <img src="/icons/play.svg" alt="play">
-      <img src="/icons/pause.svg" alt="pause">
-      <img src="/icons/sound.svg" alt="sound">
-      <img src="/icons/sound_off.svg" alt="sound_off">
+    <div
+      style="
+        display: none !important;
+        opacity: 0 !important;
+        width: 0 !important;
+        height: 0 !important;
+      "
+    >
+      <img src="/icons/like_on.svg" alt="like_on" />
+      <img src="/icons/like_off.svg" alt="like_off" />
+      <img src="/icons/sound_on.svg" alt="sound_on" />
+      <img src="/icons/sound_off.svg" alt="sound_off" />
+      <img src="/icons/play.svg" alt="play" />
+      <img src="/icons/pause.svg" alt="pause" />
+      <img src="/icons/sound.svg" alt="sound" />
+      <img src="/icons/sound_off.svg" alt="sound_off" />
     </div>
+
+    <GameInfo
+      v-if="activeGame && activeGame.game_slug !== 'final_popup'"
+      :thumb="getThumbPath(activeGame.src)"
+      :provider_link="activeGame.provider_slug"
+      :name="activeGame.name"
+      :provider="activeGame.provider"
+      :game-id="activeGame.game_slug"
+      @play-game="onPlayGame"
+      @go-to-provider="onGoToProvider"
+      @go-to-external-link="onGoToExternalLink"
+      :button-text="$t('play_button')"
+      :sign-up-button="$t('sign_up_button')"
+      :no-demo="activeGame.no_demo"
+      :is-user-loged-in="isUserLogedIn"
+      :external-link="activeGame.external_link"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, Ref, getCurrentInstance, nextTick} from 'vue'
-import { gamesData, Game as GameData } from './gameDataSets/25_08'
+import {
+  ref,
+  computed,
+  onMounted,
+  onUnmounted,
+  watch,
+  Ref,
+  getCurrentInstance,
+  nextTick,
+} from 'vue'
+import type { Game as GameData } from './types/game'
+import { useGamesData } from './composables/useGamesData'
 import smoothscroll from 'smoothscroll-polyfill'
 import GameInfo from './components/gameInfo.vue'
 import FinalPopup from './components/finalIPopup.vue'
@@ -183,32 +210,30 @@ import {
   sendReelsPause,
   sendReelsRewatchTrends,
   sendReelsFeedback,
-  sendReelsExternalLink
+  sendReelsExternalLink,
 } from './components/parentMessages'
 
 // Интерфейс игры для использования в приложении
 interface Game {
-  name: string;
-  provider: string;
-  provider_slug: string;
-  game_slug: string;
-  src: string;
-  supportedCurrencies: string[] | 'all';
-  no_demo?: boolean;
-  external_link?: {
-    url: string;
-    localeKey: string;
-  };
-  dont_hide?: boolean;
+  name: string
+  provider: string
+  provider_slug: string
+  game_slug: string
+  src: string
+  supportedCurrencies: string[] | 'all'
+  no_demo?: boolean
+  external_link?: { url: string; localeKey: string }
+  dont_hide?: boolean
+  enable_promotion?: boolean // 👈 добавили
 }
 
 // Функции для генерации путей к медиафайлам
 function getThumbPath(src: string): string {
-  return `thumbs/${src}.webp`
+  return `/thumbs/${src}.webp`
 }
 
 function getPosterPath(src: string): string {
-  return `video/posters/${src}.webp`
+  return `/video/posters/${src}.webp`
 }
 
 // Рекативные переменные
@@ -238,10 +263,14 @@ const wasManuallyPaused = ref<boolean>(false)
 // Переменные для управления автоплеем и мобильными устройствами
 const userHasInteracted = ref<boolean>(false)
 const isMobileDevice = ref<boolean>(false)
+// Энергосбережение: true, если включён Data Saver/медленное соединение; влияет на агрессивность загрузки/очистки медиа
 const isLowPowerMode = ref<boolean>(false)
 const canAutoplay = ref<boolean>(true)
 const playAttempts = ref<Map<number, number>>(new Map())
 const pendingPlayPromises = ref<Set<number>>(new Set())
+const primedVideoIndexes = new Set<number>()
+const blockedByVideo = ref<Record<string, boolean>>({})
+const mediaUnlocked = ref<boolean>(false) // до первого реального тапа
 
 // Переменная для interval мониторинга памяти
 const memoryCheckInterval = ref<number | null>(null)
@@ -254,6 +283,9 @@ const autoplayBlocked = ref<boolean>(false)
 
 // Переменные для управления памятью
 const loadedMediaRange = ref<{ start: number; end: number }>({ start: 0, end: 2 })
+
+// Активная игра для фиксированной панели GameInfo
+const activeGame = computed(() => games.value[currentVideoIndex.value] || null)
 const unloadTimeout = ref<number | null>(null)
 const observer = ref<IntersectionObserver | null>(null)
 const lastVideoChangeTime = ref<number>(0)
@@ -267,6 +299,9 @@ let providerName: string = ''
 
 let isPortrait = false
 
+// Загруженные данные игр из JSON
+let loadedGamesData: GameData[] = []
+
 /**
  * Детектирует мобильные устройства и режим энергосбережения
  */
@@ -274,135 +309,291 @@ function detectDeviceCapabilities(): void {
   // Детекция мобильного устройства
   const userAgent = navigator.userAgent.toLowerCase()
   isMobileDevice.value = /iphone|ipad|ipod|android|mobile/i.test(userAgent)
-  
+
   // Детекция iPhone
   const isIPhone = /iphone|ipod/i.test(userAgent)
-  
+
   // Проверка режима энергосбережения (косвенно через navigator.connection)
   isLowPowerMode.value = false // По умолчанию считаем что режим экономии выключен
-  
+
+  // Детект энергосбережения через Network Information API (saveData/effectiveType):
+  // используем как сигнал «слабое устройство/сеть» для снижения памяти и числа одновременно загруженных видео
   if ('connection' in navigator) {
     const connection = (navigator as any).connection
     if (connection) {
       // Если включен Data Saver или очень медленное соединение - считаем режимом энергосбережения
-      isLowPowerMode.value = connection.saveData || 
-        connection.effectiveType === 'slow-2g' || 
+      isLowPowerMode.value =
+        connection.saveData ||
+        connection.effectiveType === 'slow-2g' ||
         connection.effectiveType === '2g'
     }
   }
-  
+
   // Для начала предполагаем что автоплей возможен
   // Реальная проверка будет в onIntersection при попытке воспроизведения
   canAutoplay.value = true
-  
-  console.log('Device detection:', {
-    isMobile: isMobileDevice.value,
-    isLowPower: isLowPowerMode.value,
-    canAutoplay: canAutoplay.value
-  })
 }
 
 /**
  * Безопасное воспроизведение видео с обработкой ошибок
  */
-async function safeVideoPlay(video: HTMLVideoElement, videoIndex: number, resetTime: boolean = true): Promise<boolean> {
+async function safeVideoPlay(
+  video: HTMLVideoElement,
+  videoIndex: number,
+  resetTime: boolean = true
+): Promise<boolean> {
   if (!video || pendingPlayPromises.value.has(videoIndex)) {
     return false
   }
-  
+
   pendingPlayPromises.value.add(videoIndex)
   const maxAttempts = 3
   const currentAttempts = playAttempts.value.get(videoIndex) || 0
-  
+
   try {
     // Устанавливаем базовые свойства
     video.muted = !soundOn.value
-    
+
     // Сбрасываем время только если это новое видео или явно требуется сброс
     if (resetTime) {
       video.currentTime = 0
     }
-    
+
     // Пытаемся воспроизвести
     const playPromise = video.play()
-    
+
     if (playPromise !== undefined) {
       await playPromise
-      console.log('Видео успешно запущено:', videoIndex)
+      markVideoAsPrimed(videoIndex)
+      setVideoBlockedState(videoIndex, false)
       playAttempts.value.delete(videoIndex) // Сбрасываем счетчик при успехе
-      
+
       // Если автоплей сработал, сбрасываем флаг блокировки
       if (autoplayBlocked.value) {
         autoplayBlocked.value = false
         canAutoplay.value = true
       }
-      
+
       return true
     }
-    
+
     return false
   } catch (error) {
     console.error('Ошибка воспроизведения видео (автоплей заблокирован):', error)
-    
+
     // Увеличиваем счетчик попыток
     playAttempts.value.set(videoIndex, currentAttempts + 1)
-    
+
     // Устанавливаем флаги блокировки автоплея
     autoplayBlocked.value = true
     canAutoplay.value = false
-    
+    setVideoBlockedState(videoIndex, true)
+
     // Если превышено количество попыток, окончательно отключаем автоплей
     if (currentAttempts >= maxAttempts) {
       console.warn('Превышено количество попыток автоплея, окончательно отключаем')
     }
-    
+
     return false
   } finally {
     pendingPlayPromises.value.delete(videoIndex)
   }
 }
 
-/**
- * Обработчик первого пользовательского взаимодействия
- */
-function handleFirstUserInteraction(event?: Event): void {
-  // Останавливаем всплытие события чтобы не сработал toggleVideoPause
+function getActiveVideo(): HTMLVideoElement | null {
+  return currentVideo.value || videoRefs.value[currentVideoIndex.value] || null
+}
+
+async function unlockAndPlay(event?: Event, idx?: number): Promise<void> {
   if (event) {
     event.stopPropagation()
     event.preventDefault()
   }
-  
-  // Предотвращаем одновременное выполнение операций воспроизведения
-  if (isPlaybackOperationInProgress.value) {
-    return
-  }
-  
-  isPlaybackOperationInProgress.value = true
-  
-  // Отмечаем что пользователь взаимодействовал
-  userHasInteracted.value = true
-  
-  // Удаляем слушатели после первого взаимодействия
-  document.removeEventListener('touchstart', handleFirstUserInteraction)
-  document.removeEventListener('click', handleFirstUserInteraction)
-  document.removeEventListener('keydown', handleFirstUserInteraction)
-  
-  // Пытаемся запустить текущее видео
-  if (currentVideo.value && currentVideo.value.paused) {
-    // Пробуем запустить напрямую после пользовательского взаимодействия без сброса времени
-    void currentVideo.value.play().then(() => {
-      console.log('Видео успешно запущено после пользовательского взаимодействия')
+
+  // Разблокируем медиадоступ и даём Vue дорендерить <source> для текущего индекса
+  mediaUnlocked.value = true
+  await nextTick()
+
+  const index = typeof idx === 'number' ? idx : currentVideoIndex.value
+  const video = videoRefs.value[index] || getActiveVideo()
+  if (!video) return
+
+  // Подстрахуемся: корректно выставим mute в соответствии со state
+  video.muted = !soundOn.value
+
+  const tryPlay = async () => {
+    try {
+      const p = video.play()
+      if (p !== undefined) await p
+      markVideoAsPrimed(index)
+      setVideoBlockedState(index, false)
       autoplayBlocked.value = false
-      canAutoplay.value = true
       wasManuallyPaused.value = false
       showPlayIcon.value = true
       setTimeout(() => (showPlayIcon.value = false), 300)
       sendReelsPlay(gameSlug, gameName, providerSlug, providerName)
-      isPlaybackOperationInProgress.value = false
-    }).catch((error) => {
+    } catch (e) {
+      // Если первый вызов play() не прошёл — оставляем флаг блокировки,
+      // но ниже подпишемся на loadeddata и перезапустим автоматически.
+      autoplayBlocked.value = true
+      setVideoBlockedState(index, true)
+    }
+  }
+
+  // Если данные ещё не готовы — подхватываемся на loadeddata и играем без второго тапа
+  if (video.readyState < 2) {
+    const onReady = async () => {
+      video.removeEventListener('loadeddata', onReady)
+      await tryPlay()
+    }
+    // Страхуемся на случай, если браузер капризничает
+    video.addEventListener('loadeddata', onReady, { once: true })
+    // Явно триггерим загрузку (иногда помогает на Safari/LPM)
+    try {
+      video.load()
+    } catch {}
+
+    // Попытка немедленного старта (если браузер разрешит — сыграет сразу)
+    await tryPlay()
+  } else {
+    // Уже готово — просто играем
+    await tryPlay()
+  }
+}
+
+function markVideoAsPrimed(videoIndex: number): void {
+  if (videoIndex >= 0) {
+    primedVideoIndexes.add(videoIndex)
+  }
+}
+
+function hasVideoBeenPrimed(videoIndex: number): boolean {
+  return primedVideoIndexes.has(videoIndex)
+}
+
+function setVideoBlockedState(index: number, blocked: boolean): void {
+  if (index < 0) {
+    return
+  }
+
+  const key = index.toString()
+  const currentState = blockedByVideo.value
+
+  if (blocked) {
+    if (!currentState[key]) {
+      blockedByVideo.value = { ...currentState, [key]: true }
+    }
+  } else if (currentState[key]) {
+    const { [key]: _removed, ...rest } = currentState
+    blockedByVideo.value = rest
+  }
+}
+
+function isVideoBlocked(index: number): boolean {
+  return !!blockedByVideo.value[index.toString()]
+}
+
+function primeVideoForPlayback(video: HTMLVideoElement | null, videoIndex: number): void {
+  if (!video || hasVideoBeenPrimed(videoIndex)) {
+    return
+  }
+
+  const previousMuted = video.muted
+
+  try {
+    video.muted = true
+    const playPromise = video.play()
+
+    if (playPromise !== undefined) {
+      void playPromise
+        .then(() => {
+          markVideoAsPrimed(videoIndex)
+          video.pause()
+          try {
+            video.currentTime = 0
+          } catch (err) {
+            console.warn('Не удалось сбросить время видео после прайминга:', err)
+          }
+        })
+        .catch(error => {
+          console.warn('Ошибка прайминга видео:', error)
+        })
+        .finally(() => {
+          video.muted = previousMuted
+        })
+    } else {
+      markVideoAsPrimed(videoIndex)
+      video.pause()
+      try {
+        video.currentTime = 0
+      } catch (err) {
+        console.warn('Не удалось сбросить время видео после прайминга:', err)
+      }
+      video.muted = previousMuted
+    }
+  } catch (error) {
+    console.warn('Не удалось праймить видео:', error)
+    video.muted = previousMuted
+  }
+}
+
+/**
+ * Обработчик первого пользовательского взаимодействия
+ */
+async function handleFirstUserInteraction(event?: Event): Promise<void> {
+  if (isPlaybackOperationInProgress.value) {
+    return
+  }
+
+  isPlaybackOperationInProgress.value = true
+
+  userHasInteracted.value = true
+
+  document.removeEventListener('touchstart', handleFirstUserInteraction)
+  document.removeEventListener('click', handleFirstUserInteraction)
+  document.removeEventListener('keydown', handleFirstUserInteraction)
+
+  const activeVideo = getActiveVideo()
+  const activeVideoIndex = activeVideo ? videoRefs.value.indexOf(activeVideo) : -1
+
+  videoRefs.value.forEach((video, index) => {
+    if (!video) {
+      return
+    }
+
+    if (index !== activeVideoIndex) {
+      primeVideoForPlayback(video, index)
+    }
+  })
+
+  if (activeVideo && activeVideo.paused) {
+    const launchIndex = activeVideoIndex !== -1 ? activeVideoIndex : currentVideoIndex.value
+
+    try {
+      const success = await safeVideoPlay(activeVideo, launchIndex, false)
+
+      if (!success) {
+        await activeVideo.play()
+        markVideoAsPrimed(launchIndex)
+        setVideoBlockedState(launchIndex, false)
+      }
+
+      console.log('Видео успешно запущено после пользовательского взаимодействия')
+      autoplayBlocked.value = false
+      canAutoplay.value = true
+      setVideoBlockedState(launchIndex, false)
+      wasManuallyPaused.value = false
+      showPlayIcon.value = true
+      setTimeout(() => (showPlayIcon.value = false), 300)
+      sendReelsPlay(gameSlug, gameName, providerSlug, providerName)
+    } catch (error) {
       console.error('Ошибка запуска видео после взаимодействия:', error)
+      autoplayBlocked.value = true
+      canAutoplay.value = false
+      setVideoBlockedState(launchIndex, true)
+    } finally {
       isPlaybackOperationInProgress.value = false
-    })
+    }
   } else {
     isPlaybackOperationInProgress.value = false
   }
@@ -412,26 +603,30 @@ function handleFirstUserInteraction(event?: Event): void {
  * Преобразует данные из объединенной структуры в формат, используемый в приложении
  */
 function transformGamesData(region: 'global' | 'au'): Game[] {
-  return gamesData
-    .filter(game => game.regions[region]) // Фильтруем только игры для нужного региона
+  return loadedGamesData
+    .filter(
+      game =>
+        game.regions[region] &&
+        // если у игры есть enable_promotion — показываем только когда true;
+        // если ключа нет — показываем всегда
+        (!Object.prototype.hasOwnProperty.call(game, 'enable_promotion') ||
+          game.enable_promotion === true)
+    )
     .map(game => {
-      const regionData = game.regions[region]!;
-      
-      const no_demo_value = game.no_demo ?? false;
-      
-      const transformed = {
+      const regionData = game.regions[region]!
+      return {
         name: game.name,
         provider: regionData.provider,
         provider_slug: regionData.provider_slug,
         game_slug: regionData.game_slug,
         src: game.src,
         supportedCurrencies: game.supportedCurrencies[region] || [],
-        no_demo: Boolean(no_demo_value),
+        no_demo: game.no_demo,
         external_link: game.external_link,
-        dont_hide: game.dont_hide
-      };
-      return transformed;
-    });
+        dont_hide: game.dont_hide,
+        enable_promotion: (game as any).enable_promotion ?? undefined, //
+      }
+    })
 }
 
 // Функция масштабирования
@@ -440,35 +635,47 @@ function adjustScale(): void {
   document.documentElement.style.setProperty('--vh', `${vh}px`)
 }
 
-function toggleSound(): void {
-  soundOn.value = !soundOn.value
-  if (currentVideo.value) {
-    currentVideo.value.muted = !soundOn.value
-    if (soundOn.value) {
-      showSoundOnIcon.value = true
-      setTimeout(() => (showSoundOnIcon.value = false), 300)
-      sendReelsUnmute(gameSlug, gameName, providerSlug, providerName)
-    } else {
-      showSoundOffIcon.value = true
-      setTimeout(() => (showSoundOffIcon.value = false), 300)
-      sendReelsMute(gameSlug, gameName, providerSlug, providerName)
-    }
+async function ensureGestureThen(action: () => void, event?: Event, idx?: number): Promise<void> {
+  if (!mediaUnlocked.value) {
+    await unlockAndPlay(event, typeof idx === 'number' ? idx : currentVideoIndex.value)
+    await nextTick()
   }
+  action()
+}
+
+async function toggleSound(event?: Event): Promise<void> {
+  await ensureGestureThen(() => {
+    soundOn.value = !soundOn.value
+    if (currentVideo.value) {
+      currentVideo.value.muted = !soundOn.value
+      if (soundOn.value) {
+        showSoundOnIcon.value = true
+        setTimeout(() => (showSoundOnIcon.value = false), 300)
+        sendReelsUnmute(gameSlug, gameName, providerSlug, providerName)
+      } else {
+        showSoundOffIcon.value = true
+        setTimeout(() => (showSoundOffIcon.value = false), 300)
+        sendReelsMute(gameSlug, gameName, providerSlug, providerName)
+      }
+    }
+  }, event)
 }
 
 function isLiked(gameSlug: string): boolean {
   return likedGames.value.includes(gameSlug)
 }
 
-function toggleLike(gameSlug: string): void {
-  const index = likedGames.value.indexOf(gameSlug)
-  if (index !== -1) {
-    likedGames.value.splice(index, 1)
-  } else {
-    likedGames.value.push(gameSlug)
-    sendReelsLikedGame(gameSlug, gameName, providerSlug, providerName)
-  }
-  localStorage.setItem('likedGames', JSON.stringify(likedGames.value))
+async function toggleLike(gameSlug: string, event?: Event): Promise<void> {
+  await ensureGestureThen(() => {
+    const index = likedGames.value.indexOf(gameSlug)
+    if (index !== -1) {
+      likedGames.value.splice(index, 1)
+    } else {
+      likedGames.value.push(gameSlug)
+      sendReelsLikedGame(gameSlug, gameName, providerSlug, providerName)
+    }
+    localStorage.setItem('likedGames', JSON.stringify(likedGames.value))
+  }, event)
 }
 
 function onPlayGame(gameSlug: string): void {
@@ -486,38 +693,36 @@ function onGoToProvider(provider: string): void {
 function getParentOrigin(): string {
   // Сначала пробуем получить сохраненный origin родителя
   if (parentOrigin.value) {
-    return parentOrigin.value;
+    return parentOrigin.value
   }
-  
+
   // Пробуем получить через window.parent (может быть заблокировано CORS)
   try {
-    const parentUrl = window.parent.location.origin;
+    const parentUrl = window.parent.location.origin
     if (parentUrl && parentUrl !== window.location.origin) {
-      return parentUrl;
+      return parentUrl
     }
   } catch (e) {
-    console.log('Не удается получить parent origin через window.parent:', e);
+    console.log('Не удается получить parent origin через window.parent:', e)
   }
-  
+
   // Пробуем получить из document.referrer
   if (document.referrer) {
     try {
-      const referrerUrl = new URL(document.referrer);
-      return referrerUrl.origin;
+      const referrerUrl = new URL(document.referrer)
+      return referrerUrl.origin
     } catch (e) {
-      console.error('Невалидный referrer URL:', e);
+      console.error('Невалидный referrer URL:', e)
     }
   }
-  
+
   // Последний fallback - используем winspirit3.com
-  console.warn('Используем fallback - winspirit3.com');
-  return 'https://winspirit3.com';
+  console.warn('Используем fallback - winspirit3.com')
+  return 'https://winspirit3.com'
 }
 
 function onGoToExternalLink(pathname: string): void {
-  console.log('onGoToExternalLink called with pathname:', pathname);
-  
-  // Ставим видео на паузу перед открытием ссылки
+  // Ставим видео на паузу перед открытием ссылкиам
   if (currentVideo.value && !currentVideo.value.paused) {
     currentVideo.value.pause()
     wasManuallyPaused.value = true
@@ -525,19 +730,18 @@ function onGoToExternalLink(pathname: string): void {
     setTimeout(() => (showPauseIcon.value = false), 300)
     sendReelsPause(gameSlug, gameName, providerSlug, providerName)
   }
-  
+
   // Разделяем pathname на путь и query параметры
-  const [path, queryString] = pathname.split('?');
-  
+  const [path, queryString] = pathname.split('?')
+
   // Получаем надежный origin родителя
-  const parentUrl = getParentOrigin();
-  const linkUrl = `${parentUrl}${path}${queryString ? '?' + queryString : ''}`;
-  
+  const parentUrl = getParentOrigin()
+  const linkUrl = `${parentUrl}${path}${queryString ? '?' + queryString : ''}`
+
   // Отправляем аналитическое сообщение с pathname в label
-  sendReelsExternalLink(gameSlug, gameName, providerSlug, providerName, path);
-  
-  console.log('Открываем URL:', linkUrl);
-  window.open(linkUrl, '_blank');
+  sendReelsExternalLink(gameSlug, gameName, providerSlug, providerName, path)
+
+  window.open(linkUrl, '_blank')
 }
 
 function scrollToElement(element: HTMLElement): void {
@@ -548,7 +752,6 @@ function scrollToElement(element: HTMLElement): void {
     window.scrollTo({ top, behavior: 'smooth' })
   }
 }
-
 
 function scrollToVideo(direction: 'forwards' | 'backwards'): void {
   const numGames = games.value.length
@@ -576,7 +779,7 @@ function scrollToVideo(direction: 'forwards' | 'backwards'): void {
 const observerOptions: IntersectionObserverInit = {
   root: null,
   rootMargin: '0px',
-  threshold: 0.8
+  threshold: 0.7,
 }
 
 let finalObserver: IntersectionObserver | null = null
@@ -584,9 +787,9 @@ let finalObserver: IntersectionObserver | null = null
 function handleFinalIntersection(entries: IntersectionObserverEntry[]) {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      sendReelsFeedback("", "", "", "")
+      sendReelsFeedback('', '', '', '')
       getWatchedVideosLong()
-      sendReelsWatchedAllVideo("", "", "", "")
+      sendReelsWatchedAllVideo('', '', '', '')
     }
   })
 }
@@ -602,8 +805,23 @@ function shouldLoadMedia(index: number): boolean {
  * Определяет, нужно ли загружать источники видео для данного индекса
  */
 function shouldLoadSources(index: number): boolean {
-  const range = 1 // Загружаем источники только для текущего и соседних видео
+  const range = 1
   return Math.abs(index - currentVideoIndex.value) <= range
+}
+
+function isOverlayActive(index: number): boolean {
+  const video = videoRefs.value[index]
+  const paused = !video || video.paused
+
+  // Показываем оверлей если:
+  // 1) медиа ещё не разблокированы (нет первого тапа) - ТОЛЬКО в энергосбережении
+  // 2) либо реально заблокирован автоплей
+  return (
+    currentVideoIndex.value === index &&
+    shouldLoadMedia(index) &&
+    ((isLowPowerMode.value && !mediaUnlocked.value) ||
+      (paused && (isVideoBlocked(index) || autoplayBlocked.value)))
+  )
 }
 
 /**
@@ -654,13 +872,14 @@ function debounce<T extends (...args: any[]) => any>(
  */
 function unloadDistantVideos(): void {
   // Уменьшаем диапазон на мобильных устройствах для экономии памяти
+  // В энергосбережении/на мобиле держим в DOM и с источниками только ближайшие ролики (окно = 1) для экономии ОЗУ/IO
   const mediaRange = isMobileDevice.value || isLowPowerMode.value ? 1 : 2
   const currentIndex = currentVideoIndex.value
-  
+
   // Обновляем диапазон загружаемых медиа
   loadedMediaRange.value = {
     start: Math.max(0, currentIndex - mediaRange),
-    end: Math.min(games.value.length - 1, currentIndex + mediaRange)
+    end: Math.min(games.value.length - 1, currentIndex + mediaRange),
   }
 
   // Выгружаем видео, которые находятся вне диапазона
@@ -670,25 +889,26 @@ function unloadDistantVideos(): void {
       video.pause()
       video.removeAttribute('src')
       video.removeAttribute('poster')
-      
-      // На мобильных устройствах более агрессивно очищаем
+
+      // На слабых профилях не только убираем poster/src, но и «обезжириваем» <source> + preload,
+      // чтобы браузер не держал лишние дескрипторы/буфер
       if (isMobileDevice.value || isLowPowerMode.value) {
         // Очищаем все source элементы
         const sources = video.querySelectorAll('source')
         sources.forEach(source => source.removeAttribute('src'))
-        
+
         // Сбрасываем preload
         video.preload = 'none'
       }
-      
+
       video.load() // Принудительно очищаем буферы
-      
+
       // Удаляем из observer
       if (observer.value) {
         observer.value.unobserve(video)
         delete video.dataset.observed
       }
-      
+
       // Очищаем ref
       videoRefs.value[index] = null
     }
@@ -704,14 +924,16 @@ function unloadDistantVideos(): void {
  * Мониторинг использования памяти и принудительная очистка
  */
 function checkMemoryUsage(): void {
+  // Агрессивная защита от переполнения памяти на слабых устройствах:
+  // при >80% heap — вычищаем «неактивные» видео/источники, отписываем из observer, занижаем preload
   if ('memory' in performance) {
     const memInfo = (performance as any).memory
     const memoryUsageRatio = memInfo.usedJSHeapSize / memInfo.jsHeapSizeLimit
-    
-    // Если используется больше 80% доступной памяти
+
+    // Порог 80%: баланс между ранней профилактикой фризов и лишними перезагрузками источников
     if (memoryUsageRatio > 0.8) {
       console.warn('Высокое использование памяти, принудительная очистка:', memoryUsageRatio)
-      
+
       // Более агрессивная очистка
       const currentIndex = currentVideoIndex.value
       videoRefs.value.forEach((video, index) => {
@@ -723,7 +945,7 @@ function checkMemoryUsage(): void {
           sources.forEach(source => source.removeAttribute('src'))
           video.preload = 'none'
           video.load()
-          
+
           if (observer.value) {
             observer.value.unobserve(video)
             delete video.dataset.observed
@@ -731,13 +953,13 @@ function checkMemoryUsage(): void {
           videoRefs.value[index] = null
         }
       })
-      
+
       // Обновляем диапазон загрузки
       loadedMediaRange.value = {
         start: currentIndex,
-        end: currentIndex
+        end: currentIndex,
       }
-      
+
       if (window.gc) {
         window.gc()
       }
@@ -758,17 +980,17 @@ function updateMediaRange(): void {
   if (unloadTimeout.value) {
     clearTimeout(unloadTimeout.value)
   }
-  
-  // На мобильных устройствах сразу проверяем память
+
+  // При энергосбережении сразу проверяем память перед отложенной выгрузкой — быстрее сбрасываем «далёкие» видео
   if (isMobileDevice.value || isLowPowerMode.value) {
     checkMemoryUsage()
   }
-  
+
   // Запускаем отложенную выгрузку
   unloadTimeout.value = window.setTimeout(() => {
     debouncedUnloadVideos()
-    
-    // Дополнительная проверка памяти после выгрузки
+
+    // Повторная проверка памяти после выгрузки: сглаживаем пики использования буфера на слабых девайсах
     if (isMobileDevice.value || isLowPowerMode.value) {
       setTimeout(checkMemoryUsage, 500)
     }
@@ -787,22 +1009,26 @@ function updateVideoProgress(): void {
     const isLongEnough = currentTime >= 15
     const isProgressComplete = progress >= 30
     const currentGameSlug = currentGame.game_slug
-    const shouldTrackCompletion = isProgressComplete && 
-      !watchedVideosLong.value.includes(currentGameSlug) && 
+    const shouldTrackCompletion =
+      isProgressComplete &&
+      !watchedVideosLong.value.includes(currentGameSlug) &&
       currentGameSlug !== 'final_popup' &&
       !currentGame.dont_hide
 
     if (isLongEnough && !viewedLongEnough.value.includes(currentGameSlug)) {
       viewedLongEnough.value.push(currentGameSlug)
-      sendReelsVideo15secWatched(currentGameSlug, currentGame.name, 
-        currentGame.provider_slug, currentGame.provider)
+      sendReelsVideo15secWatched(
+        currentGameSlug,
+        currentGame.name,
+        currentGame.provider_slug,
+        currentGame.provider
+      )
     }
 
     if (shouldTrackCompletion) {
       watchedVideosLong.value = [...watchedVideosLong.value, currentGameSlug]
       throttle(() => {
-        localStorage.setItem('watchedVideosLong', 
-          JSON.stringify(watchedVideosLong.value))
+        localStorage.setItem('watchedVideosLong', JSON.stringify(watchedVideosLong.value))
       }, 1000)()
     }
   }
@@ -814,7 +1040,7 @@ function updateVideoProgress(): void {
 function addVideoProgressListener(video: HTMLVideoElement): void {
   // Удаляем предыдущий слушатель если он есть
   removeVideoProgressListener()
-  
+
   // Создаем новый слушатель
   currentVideoProgressHandler.value = () => updateVideoProgress()
   video.addEventListener('timeupdate', currentVideoProgressHandler.value)
@@ -831,37 +1057,37 @@ function removeVideoProgressListener(): void {
 }
 
 function onIntersection(entries: IntersectionObserverEntry[]): void {
-  entries.forEach((entry) => {
+  entries.forEach(entry => {
     const video = entry.target as HTMLVideoElement
     const container = video.closest('.video_screen') as HTMLElement | null
     if (!container) return
 
     const gameSlug1 = container.id
-    const game = games.value.find((g) => g.game_slug === gameSlug1)
-    const videoIndex = games.value.findIndex((g) => g.game_slug === gameSlug1)
+    const game = games.value.find(g => g.game_slug === gameSlug1)
+    const videoIndex = games.value.findIndex(g => g.game_slug === gameSlug1)
 
     if (entry.isIntersecting) {
       // Останавливаем предыдущее видео если оно играет
       if (currentVideo.value && currentVideo.value !== video && !currentVideo.value.paused) {
         currentVideo.value.pause()
       }
-      
+
       // Удаляем слушатель с предыдущего видео
       removeVideoProgressListener()
-      
+
       // Устанавливаем новое текущее видео
       currentVideo.value = video
-      
+
       // Добавляем слушатель на новое активное видео
       addVideoProgressListener(video)
-      
+
       // Обновляем индекс и запускаем выгрузку
       if (videoIndex !== -1 && videoIndex !== currentVideoIndex.value) {
         currentVideoIndex.value = videoIndex
         lastVideoChangeTime.value = Date.now()
         updateMediaRange()
       }
-      
+
       // Обновляем информацию об игре
       if (game) {
         gameSlug = game.game_slug
@@ -873,10 +1099,17 @@ function onIntersection(entries: IntersectionObserverEntry[]): void {
       // Сбрасываем состояние паузы
       wasManuallyPaused.value = false
       video.style.opacity = '1'
-      
+
+      // Если жеста ещё не было — не автозапускаем ТОЛЬКО в энергосбережении
+      if (isLowPowerMode.value && !mediaUnlocked.value) {
+        video.pause()
+        video.style.opacity = '1'
+        return
+      }
+
       // Безопасно пытаемся запустить видео
       if (videoIndex !== -1) {
-        void safeVideoPlay(video, videoIndex).then((success) => {
+        void safeVideoPlay(video, videoIndex).then(success => {
           if (success) {
             // Отправляем аналитическое событие только при успешном запуске
             setTimeout(() => {
@@ -895,7 +1128,7 @@ function onIntersection(entries: IntersectionObserverEntry[]): void {
         video.pause()
       }
       video.style.opacity = '0'
-      
+
       // Очищаем слушатель прогресса только если это текущее видео
       if (currentVideo.value === video) {
         removeVideoProgressListener()
@@ -910,50 +1143,72 @@ function toggleVideoPause(event?: Event): void {
   if (event) {
     event.stopPropagation()
   }
-  
+
   // Предотвращаем одновременное выполнение операций воспроизведения
   if (isPlaybackOperationInProgress.value) {
     return
   }
-  
+
   // Предотвращаем переключение в первые 1 секунду после смены видео
   const now = Date.now()
   if (now - lastVideoChangeTime.value < 1000) {
-    return
+    const active = getActiveVideo()
+    if (!autoplayBlocked.value && (!active || !active.paused)) {
+      isPlaybackOperationInProgress.value = false
+      return
+    }
   }
-  
+
   isPlaybackOperationInProgress.value = true
-  
-  if (currentVideo.value) {
-    const videoIndex = videoRefs.value.indexOf(currentVideo.value)
-    
-    if (currentVideo.value.paused) {
+
+  const activeVideo = getActiveVideo()
+
+  if (activeVideo) {
+    const videoIndex = videoRefs.value.indexOf(activeVideo)
+
+    if (activeVideo.paused) {
       // Пытаемся запустить видео безопасно без сброса времени воспроизведения
       if (videoIndex !== -1) {
-        void safeVideoPlay(currentVideo.value, videoIndex, false).then((success) => {
-          if (success) {
-            wasManuallyPaused.value = false
-            showPlayIcon.value = true
-            setTimeout(() => (showPlayIcon.value = false), 300)
-            sendReelsPlay(gameSlug, gameName, providerSlug, providerName)
-          } else {
-            // Если автоплей не сработал, пробуем напрямую
-            void currentVideo.value!.play().then(() => {
+        void safeVideoPlay(activeVideo, videoIndex, false)
+          .then(success => {
+            if (success) {
+              setVideoBlockedState(videoIndex, false)
+              autoplayBlocked.value = false
+              canAutoplay.value = true
               wasManuallyPaused.value = false
               showPlayIcon.value = true
               setTimeout(() => (showPlayIcon.value = false), 300)
               sendReelsPlay(gameSlug, gameName, providerSlug, providerName)
-            }).catch(console.error)
-          }
-          isPlaybackOperationInProgress.value = false
-        }).catch(() => {
-          isPlaybackOperationInProgress.value = false
-        })
+            } else {
+              // Если автоплей не сработал, пробуем напрямую
+              void activeVideo
+                .play()
+                .then(() => {
+                  setVideoBlockedState(videoIndex, false)
+                  autoplayBlocked.value = false
+                  canAutoplay.value = true
+                  wasManuallyPaused.value = false
+                  showPlayIcon.value = true
+                  setTimeout(() => (showPlayIcon.value = false), 300)
+                  sendReelsPlay(gameSlug, gameName, providerSlug, providerName)
+                })
+                .catch(error => {
+                  console.error(error)
+                  autoplayBlocked.value = true
+                  canAutoplay.value = false
+                  setVideoBlockedState(videoIndex, true)
+                })
+            }
+            isPlaybackOperationInProgress.value = false
+          })
+          .catch(() => {
+            isPlaybackOperationInProgress.value = false
+          })
       } else {
         isPlaybackOperationInProgress.value = false
       }
     } else {
-      currentVideo.value.pause()
+      activeVideo.pause()
       wasManuallyPaused.value = true
       showPauseIcon.value = true
       setTimeout(() => (showPauseIcon.value = false), 300)
@@ -1014,7 +1269,7 @@ function handleVisibilityChange(): void {
     if (currentVideo.value && currentVideo.value.paused && !wasManuallyPaused.value) {
       const videoIndex = videoRefs.value.indexOf(currentVideo.value)
       if (videoIndex !== -1) {
-        void safeVideoPlay(currentVideo.value, videoIndex, false).then((success) => {
+        void safeVideoPlay(currentVideo.value, videoIndex, false).then(success => {
           if (success) {
             showPlayIcon.value = true
             setTimeout(() => (showPlayIcon.value = false), 300)
@@ -1029,14 +1284,14 @@ function handleVisibilityChange(): void {
 // Функции для модификации массива игр до рендера
 function filterGamesByCurrency() {
   if (userCurrency.value) {
-    const currencyLower = userCurrency.value.toLowerCase();
-    games.value = games.value.filter((game) => {
+    const currencyLower = userCurrency.value.toLowerCase()
+    games.value = games.value.filter(game => {
       return (
         game.supportedCurrencies === 'all' ||
         (Array.isArray(game.supportedCurrencies) &&
           game.supportedCurrencies.some(cur => cur.toLowerCase() === currencyLower))
-      );
-    });
+      )
+    })
   }
 }
 
@@ -1057,15 +1312,17 @@ function reinitializeGames(): void {
     }
   })
   videoRefs.value = []
-  
+  blockedByVideo.value = {}
+  primedVideoIndexes.clear()
+
   // Заново получаем игры для нужного региона
   games.value = transformGamesData(userRegion.value)
-  
+
   // Применяем все фильтры заново
   filterGamesByCurrency()
   // НЕ вызываем removeWatchedGames(), так как localStorage уже очищен
   addFinalPopup()
-  
+
   // Сбрасываем состояние
   currentVideoIndex.value = 0
   currentVideoScreenId.value = 0
@@ -1074,19 +1331,19 @@ function reinitializeGames(): void {
   videoProgress.value = 0
   loadedMediaRange.value = { start: 0, end: 2 }
   lastVideoChangeTime.value = Date.now()
-  
+
   // Сбрасываем флаги автоплея
   autoplayBlocked.value = false
   canAutoplay.value = true
   userHasInteracted.value = false
-  
+
   // Добавляем слушатели обратно если на мобильном устройстве
   if (isMobileDevice.value) {
     document.addEventListener('touchstart', handleFirstUserInteraction)
     document.addEventListener('click', handleFirstUserInteraction)
     document.addEventListener('keydown', handleFirstUserInteraction)
   }
-  
+
   // Обновляем переменные текущей игры
   if (games.value.length > 0) {
     const firstGame = games.value[0]
@@ -1098,27 +1355,27 @@ function reinitializeGames(): void {
 }
 
 function rewatchTrends(): void {
-  sendReelsRewatchTrends("", "", "", "")
+  sendReelsRewatchTrends('', '', '', '')
   localStorage.removeItem('watchedVideosLong')
-  
+
   // Останавливаем текущее видео если оно играет
   if (currentVideo.value && !currentVideo.value.paused) {
     currentVideo.value.pause()
   }
-  
+
   // Очищаем слушатель прогресса перед реинициализацией
   removeVideoProgressListener()
-  
+
   setTimeout(() => {
     reinitializeGames()
-    
+
     // Ждем следующий тик для обновления DOM
     setTimeout(() => {
       scrollToTop()
-      
+
       // Переинициализируем observers для новых элементов
       if (observer.value) {
-        videoRefs.value.forEach((video) => {
+        videoRefs.value.forEach(video => {
           if (video && !video.dataset.observed) {
             observer.value!.observe(video)
             video.dataset.observed = 'true'
@@ -1131,13 +1388,13 @@ function rewatchTrends(): void {
 
 function addFinalPopup(): void {
   games.value.push({
-    name: "",
-    provider: "",
-    provider_slug: "",
-    game_slug: "final_popup",
-    src: "",
+    name: '',
+    provider: '',
+    provider_slug: '',
+    game_slug: 'final_popup',
+    src: '',
     supportedCurrencies: [],
-    dont_hide: true
+    dont_hide: true,
   })
 }
 
@@ -1152,10 +1409,8 @@ function getWatchedVideosLong(): void {
   const storedwatchedVideosLong = localStorage.getItem('watchedVideosLong')
   if (storedwatchedVideosLong) {
     watchedVideosLong.value = JSON.parse(storedwatchedVideosLong)
-  } 
+  }
 }
-
-
 
 // Инициализация параметров из URL до рендера
 const fullURL = window.location.href
@@ -1171,19 +1426,21 @@ if (queryStartIndex !== -1) {
   if (params.user_language) {
     const instance = getCurrentInstance()
     if (instance) {
-      const setLocale = instance.appContext.config.globalProperties.$setLocale as (locale: string) => void
+      const setLocale = instance.appContext.config.globalProperties.$setLocale as (
+        locale: string
+      ) => void
       setLocale(params.user_language)
     }
   }
   if (params.user_currency) {
     userCurrency.value = params.user_currency
   }
-  
+
   // Сохраняем origin родителя если он передан в параметрах
   if (params.parent_origin) {
     parentOrigin.value = params.parent_origin
   }
-  
+
   // Определяем регион пользователя
   if (params.user_reg_geo === 'AU' || params.user_ip_geo === 'AU') {
     userRegion.value = 'au'
@@ -1192,34 +1449,46 @@ if (queryStartIndex !== -1) {
   }
 
   // Определяем, авторизован ли пользователь
-  if ((params.user_reg_geo === '' || params.user_reg_geo === undefined) && 
-      (params.deposit_numbers === '' || params.deposit_numbers === undefined)) {
+  if (
+    (params.user_reg_geo === '' || params.user_reg_geo === undefined) &&
+    (params.deposit_numbers === '' || params.deposit_numbers === undefined)
+  ) {
     isUserLogedIn.value = false
   } else {
     isUserLogedIn.value = true
   }
-} 
-
-// Получаем игры для нужного региона
-games.value = transformGamesData(userRegion.value)
-
-
-getWatchedVideosLong()
-filterGamesByCurrency()
-removeWatchedGames()
-addFinalPopup()
-
-const storedLikedGames = localStorage.getItem('likedGames')
-if (storedLikedGames) {
-  likedGames.value = JSON.parse(storedLikedGames)
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // Загружаем данные игр из JSON
+  try {
+    loadedGamesData = await useGamesData()
+  } catch (error) {
+    console.error('Failed to load games data:', error)
+    return
+  }
+
+  // Получаем игры для нужного региона
+  games.value = transformGamesData(userRegion.value)
+
+  getWatchedVideosLong()
+  filterGamesByCurrency()
+  removeWatchedGames()
+  addFinalPopup()
+
+  const storedLikedGames = localStorage.getItem('likedGames')
+  if (storedLikedGames) {
+    likedGames.value = JSON.parse(storedLikedGames)
+  }
+
   smoothscroll.polyfill()
-  
+
   // Инициализируем детекцию устройств
   detectDeviceCapabilities()
-  
+
+  // Гейт жеста включаем только в энергосбережении
+  mediaUnlocked.value = !isLowPowerMode.value
+
   // Добавляем слушатели для первого пользовательского взаимодействия только на мобильных
   // где автоплей может быть заблокирован
   if (isMobileDevice.value) {
@@ -1227,23 +1496,22 @@ onMounted(() => {
     document.addEventListener('click', handleFirstUserInteraction)
     document.addEventListener('keydown', handleFirstUserInteraction)
   }
-  
+
   scrollToTop()
-  
+
   // Инициализируем время последней смены видео
   lastVideoChangeTime.value = Date.now()
-  
+
   // Попробуем сохранить origin родителя при загрузке, если еще не сохранен
   if (!parentOrigin.value && document.referrer) {
     try {
-      const referrerUrl = new URL(document.referrer);
-      parentOrigin.value = referrerUrl.origin;
-      console.log('Сохранен parent origin из referrer:', parentOrigin.value);
+      const referrerUrl = new URL(document.referrer)
+      parentOrigin.value = referrerUrl.origin
     } catch (e) {
-      console.log('Не удалось получить parent origin из referrer:', e);
+      console.log('Не удалось получить parent origin из referrer:', e)
     }
   }
-  
+
   window.addEventListener('DOMContentLoaded', adjustScale)
   window.addEventListener('resize', checkOrientation)
   window.addEventListener('resize', () => {
@@ -1252,22 +1520,22 @@ onMounted(() => {
 
   // Создаем единый observer
   observer.value = new IntersectionObserver(onIntersection, observerOptions)
-  
+
   // Инициализируем observer для загруженных видео
   nextTick(() => {
-    videoRefs.value.forEach((video) => {
+    videoRefs.value.forEach(video => {
       if (video && observer.value && !video.dataset.observed) {
         observer.value.observe(video)
         video.dataset.observed = 'true'
       }
     })
   })
-  
+
   const finalEl = document.getElementById('final_popup')
   if (finalEl) {
     finalObserver = new IntersectionObserver(handleFinalIntersection, {
       root: null,
-      threshold: 0.5
+      threshold: 0.5,
     })
     finalObserver.observe(finalEl)
   }
@@ -1279,11 +1547,11 @@ onMounted(() => {
   sendReelsReady(gameSlug, gameName, providerSlug, providerName)
   isPortrait = window.screen.orientation.angle === 0 || window.screen.orientation.angle === 180
   window.addEventListener('orientationchange', checkOrientation)
-  
+
   // Добавляем слушатель для автоматического воспроизведения при возвращении на вкладку
   document.addEventListener('visibilitychange', handleVisibilityChange)
-  
-  // Периодическая проверка памяти на мобильных устройствах
+
+  // Фоновый монитор памяти раз в 30с включаем только при энергосбережении/мобиле, чтобы не тратить ресурсы на десктопе
   if (isMobileDevice.value || isLowPowerMode.value) {
     memoryCheckInterval.value = window.setInterval(checkMemoryUsage, 30000) // Проверяем каждые 30 секунд
   }
@@ -1292,7 +1560,7 @@ onMounted(() => {
 onUnmounted(() => {
   // Очищаем слушатель прогресса
   removeVideoProgressListener()
-  
+
   // Очищаем все таймеры
   if (unloadTimeout.value) {
     clearTimeout(unloadTimeout.value)
@@ -1300,19 +1568,19 @@ onUnmounted(() => {
   if (memoryCheckInterval.value) {
     window.clearInterval(memoryCheckInterval.value)
   }
-  
+
   // Очищаем слушатели пользовательского взаимодействия
   document.removeEventListener('touchstart', handleFirstUserInteraction)
   document.removeEventListener('click', handleFirstUserInteraction)
   document.removeEventListener('keydown', handleFirstUserInteraction)
-  
+
   // Очищаем состояние воспроизведения
   playAttempts.value.clear()
   pendingPlayPromises.value.clear()
-  
+
   // Очищаем observers
   if (observer.value) {
-    videoRefs.value.forEach((video) => {
+    videoRefs.value.forEach(video => {
       if (video) {
         observer.value!.unobserve(video)
         delete video.dataset.observed
@@ -1321,14 +1589,14 @@ onUnmounted(() => {
     observer.value.disconnect()
     observer.value = null
   }
-  
+
   if (finalObserver) {
     finalObserver.disconnect()
     finalObserver = null
   }
-  
+
   // Очищаем все видео refs
-  videoRefs.value.forEach((video) => {
+  videoRefs.value.forEach(video => {
     if (video) {
       video.pause()
       video.removeAttribute('src')
@@ -1336,7 +1604,9 @@ onUnmounted(() => {
     }
   })
   videoRefs.value = []
-  
+  blockedByVideo.value = {}
+  primedVideoIndexes.clear()
+
   // Удаляем слушатели событий
   window.removeEventListener('resize', checkOrientation)
   window.removeEventListener('resize', () => {
@@ -1344,7 +1614,7 @@ onUnmounted(() => {
   })
   window.removeEventListener('orientationchange', checkOrientation)
   document.removeEventListener('visibilitychange', handleVisibilityChange)
-  
+
   // Обнуляем ссылки
   currentVideo.value = null
 })

@@ -4,17 +4,16 @@
   height: 0;
 }
 
-
-
 .videos_container {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: fit-content;
+  // height: 100dvh;
   display: flex;
   flex-direction: column;
-  background-color: #120E1B;
+  background-color: #120e1b;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -27,7 +26,6 @@
   object-fit: cover;
   z-index: 0;
 }
-
 
 .video_screen {
   position: relative;
@@ -47,12 +45,11 @@
   user-select: none;
   z-index: 1;
   position: absolute;
-  background-color: #120E1B;
+  background-color: #120e1b;
   opacity: 0;
   transition: opacity 0.3s linear;
   transition-delay: 0.1s;
 }
-
 
 .video_area {
   position: absolute;
@@ -68,9 +65,8 @@
 }
 
 div.video_area::-webkit-scrollbar {
-  display: none
+  display: none;
 }
-
 
 .media_state_icons {
   position: absolute;
@@ -82,7 +78,6 @@ div.video_area::-webkit-scrollbar {
   height: 12vh;
   z-index: 1;
 }
-
 
 .progress_bg {
   position: absolute;
@@ -99,11 +94,10 @@ div.video_area::-webkit-scrollbar {
   bottom: 0;
   left: 0;
   height: 2px;
-  background-color: #00A674;
+  background-color: #00a674;
   z-index: 10;
   transition: width 0.25s linear;
 }
-
 
 .fade-enter-active,
 .fade-leave-active {
@@ -123,32 +117,16 @@ div.video_area::-webkit-scrollbar {
 // Стили для overlay при заблокированном автоплее
 .autoplay_blocked_overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
+  display: grid;
+  place-items: center;
+  z-index: 10;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  pointer-events: all;
-  
+
   &:hover {
     background-color: rgba(0, 0, 0, 0.8);
-  }
-}
-
-// Когда активен overlay автоплея, блокируем клики по всем остальным элементам
-.video_screen.autoplay-blocked {
-  .gradient,
-  .sound_icon,
-  .like_icon,
-  .game_info_container {
-    pointer-events: none;
   }
 }
 
@@ -156,12 +134,11 @@ div.video_area::-webkit-scrollbar {
   width: 15vh;
   height: 15vh;
   transition: all 0.3s ease;
-  
+
   .autoplay_blocked_overlay:hover & {
     transform: scale(1.1);
   }
 }
-
 
 .sound_icon {
   position: absolute;
@@ -187,7 +164,6 @@ div.video_area::-webkit-scrollbar {
   transition: transform 0.3s ease-in-out;
 }
 
-
 .game_info_container {
   position: absolute;
   bottom: 2px;
@@ -195,7 +171,7 @@ div.video_area::-webkit-scrollbar {
   border-radius: 3vh;
   left: 0;
   width: 97%;
-  background: #110E1B;
+  background: #110e1b;
   z-index: 1000;
   display: flex;
   left: 1.5%;
@@ -219,7 +195,7 @@ div.video_area::-webkit-scrollbar {
   position: relative;
   top: 0;
   left: 5%;
-  width: 45%;
+  width: 42%;
   height: 93%;
   display: flex;
   flex-direction: column;
@@ -240,7 +216,7 @@ div.video_area::-webkit-scrollbar {
 
 .game_provider {
   color: #f7f7f7;
-  color: #66F4CA;
+  color: #66f4ca;
   text-decoration: underline;
   text-align: left;
   font-family: Sora, system-ui;
@@ -260,8 +236,8 @@ div.video_area::-webkit-scrollbar {
   height: 5vh;
   top: 50%;
   transform: translateY(-50%);
-  background-color: #00EDA6;
-  color: #110E1B;
+  background-color: #00eda6;
+  color: #110e1b;
   font-family: Sora, system-ui;
   font-weight: 700;
   display: flex;
@@ -274,6 +250,7 @@ div.video_area::-webkit-scrollbar {
   font-size: 2dvh;
   border-radius: 5dvh;
   cursor: pointer;
+  pointer-events: all;
 }
 
 .external_link_container {
@@ -300,8 +277,6 @@ div.video_area::-webkit-scrollbar {
   @media (max-width: 768px) {
     margin-bottom: 5dvh;
   }
-  
-
 }
 
 .prize_amount {
@@ -311,19 +286,18 @@ div.video_area::-webkit-scrollbar {
   font-weight: 800;
   font-family: Sora, system-ui;
   margin-bottom: 0.5vh;
-  text-shadow: 0px 0.5vh 0.8vh rgba(17, 14, 27, 0.80);
-
+  text-shadow: 0px 0.5vh 0.8vh rgba(17, 14, 27, 0.8);
 }
 
 .prize_description {
-  font-size: 4vh; 
+  font-size: 4vh;
   color: #ffffff;
   font-weight: 800;
   font-family: Sora, system-ui;
-  text-shadow: 0px 0.5vh 0.8vh rgba(17, 14, 27, 0.80);
-  
+  text-shadow: 0px 0.5vh 0.8vh rgba(17, 14, 27, 0.8);
+
   @media (max-width: 768px) {
-    font-size: 3.8dvh; 
+    font-size: 3.8dvh;
   }
 }
 
@@ -335,8 +309,12 @@ div.video_area::-webkit-scrollbar {
 .external_link_btn {
   width: 82%;
   border-radius: 50%;
-  background: radial-gradient(108.72% 205.33% at 50% 151.67%, #98FFE0 0%, #00EDA6 60.87%);
-  color: #110E1B;
+  background: radial-gradient(
+    108.72% 205.33% at 50% 151.67%,
+    #98ffe0 0%,
+    #00eda6 60.87%
+  );
+  color: #110e1b;
   font-family: Sora, system-ui;
   margin-bottom: 1.5vh;
   font-weight: 700;
@@ -345,7 +323,7 @@ div.video_area::-webkit-scrollbar {
   border-radius: 5vh;
   display: flex;
   justify-content: center;
-  align-items: center; 
+  align-items: center;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -364,14 +342,17 @@ div.video_area::-webkit-scrollbar {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.8) 50%, transparent 60%);
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.8) 50%,
+    transparent 60%
+  );
   filter: blur(3px);
   transform: rotate(45deg);
   animation: shine 5s ease-in-out infinite;
   opacity: 0;
 }
-
-
 
 @keyframes shine {
   0% {
@@ -392,13 +373,13 @@ div.video_area::-webkit-scrollbar {
 
 @keyframes glow {
   0% {
-    filter: drop-shadow(0 0 1px #00EDA6);
+    filter: drop-shadow(0 0 1px #00eda6);
   }
   50% {
-    filter: drop-shadow(0 0 6px #00EDA6);
+    filter: drop-shadow(0 0 6px #00eda6);
   }
   100% {
-    filter: drop-shadow(0 0 1px #00EDA6);
+    filter: drop-shadow(0 0 1px #00eda6);
   }
 }
 
@@ -407,7 +388,6 @@ div.video_area::-webkit-scrollbar {
 }
 
 @media (max-width: 768px) {
-
   .sound_icon {
     height: 4vh;
     width: 4vh;
@@ -421,67 +401,64 @@ div.video_area::-webkit-scrollbar {
     right: 1vh;
   }
 
-  
-@supports (height: 100dvh) {
+  @supports (height: 100dvh) {
+    .sound_icon {
+      height: 4dvh;
+      width: 4dvh;
+      top: 72dvh;
+      right: 1dvh;
+    }
+    .like_icon {
+      height: 4dvh;
+      width: 4dvh;
+      top: 80dvh;
+      right: 1dvh;
+    }
+    .video_screen {
+      height: 100dvh;
+    }
 
-  .sound_icon {
-    height: 4dvh;
-    width: 4dvh;
-    top: 72dvh;
-    right: 1dvh;
-  }
-  .like_icon {
-    height: 4dvh;
-    width: 4dvh;
-    top: 80dvh;
-    right: 1dvh;
-  }
-  .video_screen {
-    height: 100dvh;
-  }
+    .video_screen_item {
+      height: 100dvh;
+    }
 
-  .video_screen_item {
-    height: 100dvh;
-  }
+    .unit_selector {
+      top: 10.5dvh;
+      gap: 1.8dvh;
+    }
 
-  .unit_selector {
-    top: 10.5dvh;
-    gap: 1.8dvh;
-  }
+    .unit_selector_item {
+      font-size: 2.4dvh;
+    }
 
-  .unit_selector_item {
-    font-size: 2.4dvh;
-  }
+    .game_info_container {
+      bottom: 2px;
+      height: 14dvh;
+      width: 97dvw;
+      left: 1.5dvw;
+      pointer-events: none;
+    }
 
+    .game_info_thumb {
+      height: 10.6dvh;
+      width: 10.6dvh;
+      top: 1.5dvh;
+      left: 1.5dvh;
+    }
 
-  .game_info_container {
-    bottom: 2px;
-    height: 14dvh;
-    width: 97dvw;
-    left: 1.5dvw;
-  }
+    .game_name {
+      font-size: 2.1dvh;
+    }
 
-  .game_info_thumb {
-    height: 10.6dvh;
-    width: 10.6dvh;
-    top: 1.5dvh;
-    left: 1.5dvh;
-  }
+    .game_provider {
+      font-size: 2dvh;
+    }
 
-  .game_name {
-    font-size: 2.1dvh;
+    .external_link_btn {
+      font-size: 2dvh;
+      padding: 2.5dvh 4dvh;
+    }
   }
-  
-  .game_provider {
-   font-size: 2dvh;
-  }
-
-  .external_link_btn {
-    font-size: 2dvh;
-    padding: 2.5dvh 4dvh;
-  }
-
-} 
 }
 
 .gradient {
@@ -510,12 +487,9 @@ div.video_area::-webkit-scrollbar {
     border-radius: 1vh;
   }
 
-
-
-.video_area {
-  border-radius: 1.2vh;
-}
-
+  .video_area {
+    border-radius: 1.2vh;
+  }
 
   .video_screen {
     height: 90vh;
@@ -528,88 +502,80 @@ div.video_area::-webkit-scrollbar {
     height: 90vh;
   }
 
-
-  
   .game_provider {
     font-size: 2dvh;
   }
-.video_area {
-  overflow-y: hidden;
-}
-.arrow_container {
-  display: flex;
-  flex-direction: column;
-  width: 5vh;
-  height: 12vh;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(580%, -50%);
-  z-index: 1000;
-  gap: 2vh;
-  justify-content: space-between;
-}
+  .video_area {
+    overflow-y: hidden;
+  }
+  .arrow_container {
+    display: flex;
+    flex-direction: column;
+    width: 5vh;
+    height: 12vh;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(580%, -50%);
+    z-index: 1000;
+    gap: 2vh;
+    justify-content: space-between;
+  }
 
-
-
-
-
-.arrow {
-  width: 3.5vh;
-  height: 3.5vh;
-  padding: 0.8vh;
-  cursor: pointer;
-  position: relative;
-  background-color: #4C426B;
-  border-radius: 50%;
-  background-size: 65%;
-  background-position: center;
-  background-repeat: no-repeat;
-  transition: background-color 0.5s ease-in-out;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: inherit;
+  .arrow {
+    width: 3.5vh;
+    height: 3.5vh;
+    padding: 0.8vh;
+    cursor: pointer;
+    position: relative;
+    background-color: #4c426b;
+    border-radius: 50%;
     background-size: 65%;
     background-position: center;
     background-repeat: no-repeat;
-    transition: filter 0.5s ease-in-out;
-  }
-
-  &:hover {
-    background-color: #00EDA6;
+    transition: background-color 0.5s ease-in-out;
 
     &::before {
-      filter: invert(1);
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: inherit;
+      background-size: 65%;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: filter 0.5s ease-in-out;
     }
+
+    &:hover {
+      background-color: #00eda6;
+
+      &::before {
+        filter: invert(1);
+      }
+    }
+  }
+
+  .bottom {
+    transform: rotate(180deg);
+  }
+  .bottom {
+    transform: rotate(180deg);
+  }
+  .bottom_menu {
+    display: none;
+  }
+  .header {
+    margin-top: -1px;
+  }
+  .hint_section {
+    display: none;
   }
 }
 
-.bottom {
-  transform: rotate(180deg);
-}
-.bottom {
-  transform: rotate(180deg);
-}
-.bottom_menu {
-  display: none;
-}
-.header {
-  margin-top: -1px;
-}
-.hint_section {
-  display: none;
-}
-
-}
-
-@media (max-aspect-ratio: 9/16),
-(min-width: 768px) {
+@media (max-aspect-ratio: 9/16), (min-width: 768px) {
   .game_info_container {
     height: 10vh;
     border-radius: 2vh;
